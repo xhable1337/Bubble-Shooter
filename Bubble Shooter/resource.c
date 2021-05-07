@@ -21,7 +21,7 @@ char* soundOnHoverBlue = "./Images/soundOnHoverBlue.png";       // Синяя кнопка 
 char* soundOffBlue = "./Images/soundOffBlue.png";	            // Синяя кнопка "звук выключен"
 char* soundOffHoverBlue = "./Images/soundOffHoverBlue.png";     // Синяя кнопка "звук включен" при наведении мыши
 char* lifeBlue = "./Images/lifeBlue.png";                       // Синий индикатор жизней
-													            
+                                                                
 // Средний уровень угрозы							            
 char* uiYellow = "./Images/uiYellow.png";                       // Жёлтый игровой UI
 char* menuYellow = "./Images/menuYellow.png";                   // Жёлтая кнопка главного меню
@@ -31,7 +31,7 @@ char* soundOnHoverYellow = "./Images/soundOnHoverYellow.png";   // Жёлтая кнопка
 char* soundOffYellow = "./Images/soundOffYellow.png";           // Жёлтая кнопка "звук выключен"
 char* soundOffHoverYellow = "./Images/soundOffHoverYellow.png"; // Жёлтая кнопка "звук выключен" при наведении мыши
 char* lifeYellow = "./Images/lifeYellow.png";                   // Жёлтый индикатор жизней
-													    
+                                                        
 // Высокий уровень угрозы							    
 char* uiRed = "./Images/uiRed.png";							    // Красный игровой UI
 char* menuRed = "./Images/menuRed.png";						    // Красная кнопка главного меню
@@ -43,7 +43,7 @@ char* soundOffHoverRed = "./Images/soundOffHoverRed.png";       // Красная кнопк
 char* lifeRed = "./Images/lifeRed.png";						    // Красный индикатор жизней
 
 // Проигрыш
-char* defeat = "./Images/defeat.png";							// Сплэш-скрин при поражении
+char* defeat = "./Images/defeat.png";                           // Сплэш-скрин при поражении
 char* returnRed = "./Images/returnRed.png";                     // Красная кнопка перезапуска 
 char* returnHoverRed = "./Images/returnHoverRed.png";           // Красная кнопка перезапуска при наведении
 char* rankRed = "./Images/rankRed.png";                         // Красная кнопка таблицы рекордов

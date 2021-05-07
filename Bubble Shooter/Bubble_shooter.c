@@ -650,8 +650,8 @@ UIELEMENT createELEMENT(float posX, float posY, int color, SDL_Surface* image)
 
 /*Create PLAYER*/
 PLAYER createPLAYER(float posX, float posY,
-					float stepX, float stepY,
-					int color, SDL_Surface *image)
+                    float stepX, float stepY,
+                    int color, SDL_Surface *image)
 {
     PLAYER p;
 
@@ -668,23 +668,23 @@ PLAYER createPLAYER(float posX, float posY,
 
 /*Create NPC*/
 NPC createNPC(float posY, float posX,
-			  int indexY, int indexX,
-			  int color, SDL_Surface *image)
+              int indexY, int indexX,
+              int color, SDL_Surface *image)
 {
-	NPC n;
+    NPC n;
 
-	n.posX = posX;
-	n.posY = posY;
-	n.indexY = indexY;
-	n.indexX = indexX;
-	n.color = color;
-	n.image = image;
-	n.centerX = posX + IMAGE_WIDTH / 2;
-	n.centerY = posY + IMAGE_HEIGHT / 2;
-	n.coltype = 0;
+    n.posX = posX;
+    n.posY = posY;
+    n.indexY = indexY;
+    n.indexX = indexX;
+    n.color = color;
+    n.image = image;
+    n.centerX = posX + IMAGE_WIDTH / 2;
+    n.centerY = posY + IMAGE_HEIGHT / 2;
+    n.coltype = 0;
     n.remain = 0;
 
-	return n;
+    return n;
 
 }
 
@@ -778,14 +778,14 @@ void createGrid(int ballY)
 /*Displays player on screen*/
 void drawPLAYER(PLAYER p)
 {
-	SDL_Rect srcRect, dstRect;
-	srcRect.x = 0;
-	srcRect.y = 0;
-	srcRect.w = IMAGE_WIDTH;
-	srcRect.h = IMAGE_HEIGHT;
-	dstRect.x = p.posX;
-	dstRect.y = p.posY;
-	SDL_BlitSurface( p.image, &srcRect, gScreenSurface, &dstRect );
+    SDL_Rect srcRect, dstRect;
+    srcRect.x = 0;
+    srcRect.y = 0;
+    srcRect.w = IMAGE_WIDTH;
+    srcRect.h = IMAGE_HEIGHT;
+    dstRect.x = p.posX;
+    dstRect.y = p.posY;
+    SDL_BlitSurface( p.image, &srcRect, gScreenSurface, &dstRect );
 }
 
 /*Displayes Background on screen*/
@@ -1246,10 +1246,10 @@ void Play() {
 
     if(clicked)
     {
-		movePLAYER();
-		collision();
+        movePLAYER();
+        collision();
         /*checkAround(n);*/
-	}
+    }
 
     if(maxhealth == 0){
       maxhealth = 6;
@@ -1287,7 +1287,7 @@ int init() {
     {
         /*Create window*/ /*##Trocar o nome*/
         gWindow = SDL_CreateWindow( "Omega Shooter", SDL_WINDOWPOS_UNDEFINED,
-									SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
+                                    SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
         if( gWindow == NULL )
         {
             printf( "Window could not be created! SDL Error: %s\n", SDL_GetError() );
@@ -1312,23 +1312,23 @@ int init() {
 
             /*Initialize TTF*/
             if (TTF_Init() == -1){
-        		printf("SDL could not initialize TTF! SDL Error: %s\n", SDL_GetError());
+                printf("SDL could not initialize TTF! SDL Error: %s\n", SDL_GetError());
                 success = false;
-	        }
+            }
 
             /*Initialize SDL_mixer */
             if( Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 4096 ) == -1 )
-            	success = false;
+                success = false;
 
             /* Load our sound effect */
             wave = Mix_LoadWAV(WAV_PATH);
             if (wave == NULL)
-            	success = false;
+                success = false;
 
             /* Load our music */
             music = Mix_LoadMUS(MUS_PATH);
             if (music == NULL)
-            	success = false;
+                success = false;
 
             /*surfaceMessage = TTF_RenderText_Solid(font, "000000000000", ttfColor);*/
 
@@ -1415,13 +1415,13 @@ void closing()
     /*printf("freed gWindow\n");*/
 
     /* clean up our resources */
-	/*Mix_FreeChunk(wave);*/
+    /*Mix_FreeChunk(wave);*/
     /*if(music != NULL)
-	   Mix_FreeMusic(music);
+       Mix_FreeMusic(music);
     printf("freed music\n");*/
 
-	/* quit SDL_mixer */
-	/*Mix_CloseAudio();
+    /* quit SDL_mixer */
+    /*Mix_CloseAudio();
     printf("closed audio\n");*/
 
     /*Quit SDL subsystems*/

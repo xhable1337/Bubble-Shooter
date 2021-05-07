@@ -20,7 +20,7 @@ extern char* soundOnHoverBlue;    // —ин€€ кнопка "звук включен" при наведении м
 extern char* soundOffBlue;        // —ин€€ кнопка "звук включен"
 extern char* soundOffHoverBlue;   // —ин€€ кнопка "звук выключен" при наведении мыши
 extern char* lifeBlue;            // —иний индикатор жизней
-						     
+                             
 // —редний уровень угрозы (жЄлтый)
 extern char* uiYellow;            // ∆Єлтый игровой UI
 extern char* menuYellow;          // ∆Єлта€ кнопка главного меню
@@ -56,7 +56,7 @@ extern char* rankBlue;	          // —ин€€ кнопка таблицы рекордов
 extern char* rankHoverBlue;		  // —ин€€ кнопка таблицы рекордов при наведении
 
 
-								  
+                                  
 //// ¬нутриигровые модели		  
 // Ўарики						  
 extern char* color1;              // ÷вет шарика под номером 1
