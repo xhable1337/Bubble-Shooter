@@ -1,11 +1,11 @@
 ﻿#pragma once
 
 //// Ассеты для меню
-extern char* menuBG;             // Фон для меню
-extern char* menuBG2;            // Фон в пунктах меню
-extern char* arrow;              // Стрелка для меню
-extern char* topPlayers;         // Таблица рекордов
-extern char* credits;            // Экран информации
+extern char* menuBG;              // Фон для меню
+extern char* menuBG2;             // Фон в пунктах меню
+extern char* arrow;               // Стрелка для меню
+extern char* topPlayers;          // Таблица рекордов
+extern char* credits;             // Экран информации
 
 //// Внутриигровые ассеты интерфейса
 // Фон
