@@ -3,7 +3,7 @@
 //// Ассеты для меню
 char* menuBG = "./Images/menuBG.png";                           // Фон для меню			            
 char* menuBG2 = "./Images/BG.png";                              // Фон в пунктах меню
-char* arrow = "./Images/arrow.png";								// Стрелка для меню
+char* arrow = "./Images/arrow.png";                             // Стрелка для меню
 char* topPlayers = "./Images/topPlayers.png";                   // Таблица рекордов
 char* credits = "./Images/credits.png";                         // Экран информации
 
@@ -13,12 +13,12 @@ char* credits = "./Images/credits.png";                         // Экран и
 char* gameBG = "./Images/BG2.png";                              // Фон во время игры
 
 // Низкий уровень угрозы							            
-char* uiBlue = "./Images/uiBlue.png";				            // Синий игровой UI
-char* menuBlue = "./Images/menuBlue.png";			            // Синяя кнопка главного меню
+char* uiBlue = "./Images/uiBlue.png";                           // Синий игровой UI
+char* menuBlue = "./Images/menuBlue.png";                       // Синяя кнопка главного меню
 char* menuHoverBlue = "./Images/menuHoverBlue.png";             // Синяя кнопка главного меню при наведении мыши
-char* soundOnBlue = "./Images/soundOnBlue.png";		            // Синяя кнопка "звук включен"
+char* soundOnBlue = "./Images/soundOnBlue.png";                 // Синяя кнопка "звук включен"
 char* soundOnHoverBlue = "./Images/soundOnHoverBlue.png";       // Синяя кнопка "звук включен" при наведении мыши
-char* soundOffBlue = "./Images/soundOffBlue.png";	            // Синяя кнопка "звук выключен"
+char* soundOffBlue = "./Images/soundOffBlue.png";               // Синяя кнопка "звук выключен"
 char* soundOffHoverBlue = "./Images/soundOffHoverBlue.png";     // Синяя кнопка "звук включен" при наведении мыши
 char* lifeBlue = "./Images/lifeBlue.png";                       // Синий индикатор жизней
                                                                 
@@ -33,14 +33,14 @@ char* soundOffHoverYellow = "./Images/soundOffHoverYellow.png"; // Жёлтая 
 char* lifeYellow = "./Images/lifeYellow.png";                   // Жёлтый индикатор жизней
                                                         
 // Высокий уровень угрозы							    
-char* uiRed = "./Images/uiRed.png";							    // Красный игровой UI
-char* menuRed = "./Images/menuRed.png";						    // Красная кнопка главного меню
-char* menuHoverRed = "./Images/menuHoverRed.png";			    // Красная кнопка главного меню при наведении мыши
-char* soundOnRed = "./Images/soundOnRed.png";				    // Красная кнопка "звук включен"
+char* uiRed = "./Images/uiRed.png";                             // Красный игровой UI
+char* menuRed = "./Images/menuRed.png";                         // Красная кнопка главного меню
+char* menuHoverRed = "./Images/menuHoverRed.png";               // Красная кнопка главного меню при наведении мыши
+char* soundOnRed = "./Images/soundOnRed.png";                   // Красная кнопка "звук включен"
 char* soundOnHoverRed = "./Images/soundOnHoverRed.png";         // Красная кнопка "звук включен" при наведении мыши
-char* soundOffRed = "./Images/soundOffRed.png";				    // Красная кнопка "звук выключен"
+char* soundOffRed = "./Images/soundOffRed.png";                 // Красная кнопка "звук выключен"
 char* soundOffHoverRed = "./Images/soundOffHoverRed.png";       // Красная кнопка "звук выключен" при наведении мыши
-char* lifeRed = "./Images/lifeRed.png";						    // Красный индикатор жизней
+char* lifeRed = "./Images/lifeRed.png";                         // Красный индикатор жизней
 
 // Проигрыш
 char* defeat = "./Images/defeat.png";                           // Сплэш-скрин при поражении
@@ -52,9 +52,9 @@ char* rankHoverRed = "./Images/rankHoverRed.png";               // Красна�
 // Выигрыш
 char* victory = "./Images/victory.png";                         // Сплэш-скрин при победе
 char* returnBlue = "./Images/returnBlue.png";                   // Синяя кнопка перезапуска 
-char* returnHoverBlue = "./Images/returnHoverBlue.png";		    // Синяя кнопка перезапуска при наведении
-char* rankBlue = "./Images/rankBlue.png";					    // Синяя кнопка таблицы рекордов
-char* rankHoverBlue = "./Images/rankHoverBlue.png";			    // Синяя кнопка таблицы рекордов при наведении
+char* returnHoverBlue = "./Images/returnHoverBlue.png";         // Синяя кнопка перезапуска при наведении
+char* rankBlue = "./Images/rankBlue.png";                       // Синяя кнопка таблицы рекордов
+char* rankHoverBlue = "./Images/rankHoverBlue.png";             // Синяя кнопка таблицы рекордов при наведении
 
 //// Внутриигровые модели
 // Шарики

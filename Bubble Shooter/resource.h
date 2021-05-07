@@ -9,7 +9,7 @@ extern char* credits;            // Экран информации
 
 //// Внутриигровые ассеты интерфейса
 // Фон
-extern char* gameBG;             // Фон во время игры
+extern char* gameBG;              // Фон во время игры
 
 // Низкий уровень угрозы (синий)
 extern char* uiBlue;              // Синий игровой UI
