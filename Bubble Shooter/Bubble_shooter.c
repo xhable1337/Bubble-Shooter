@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Teste 2.3
  * Este programa e um prototipo do jogo Bubble Shooter
  * 17/10/16

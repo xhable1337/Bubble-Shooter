@@ -1,63 +1,63 @@
-#define MODELS 2 // Выбор моделей для игры (1 - планеты, 2 - шарики)
+п»ї#define MODELS 2 // Р’С‹Р±РѕСЂ РјРѕРґРµР»РµР№ РґР»СЏ РёРіСЂС‹ (1 - РїР»Р°РЅРµС‚С‹, 2 - С€Р°СЂРёРєРё)
 
-//// Ассеты для меню
-char* menuBG = "./Images/menuBG.png";                           // Фон для меню			            
-char* menuBG2 = "./Images/BG.png";                              // Фон в пунктах меню
-char* arrow = "./Images/arrow.png";								// Стрелка для меню
-char* topPlayers = "./Images/topPlayers.png";                   // Таблица рекордов
-char* credits = "./Images/credits.png";                         // Экран информации
+//// РђСЃСЃРµС‚С‹ РґР»СЏ РјРµРЅСЋ
+char* menuBG = "./Images/menuBG.png";                           // Р¤РѕРЅ РґР»СЏ РјРµРЅСЋ			            
+char* menuBG2 = "./Images/BG.png";                              // Р¤РѕРЅ РІ РїСѓРЅРєС‚Р°С… РјРµРЅСЋ
+char* arrow = "./Images/arrow.png";								// РЎС‚СЂРµР»РєР° РґР»СЏ РјРµРЅСЋ
+char* topPlayers = "./Images/topPlayers.png";                   // РўР°Р±Р»РёС†Р° СЂРµРєРѕСЂРґРѕРІ
+char* credits = "./Images/credits.png";                         // Р­РєСЂР°РЅ РёРЅС„РѕСЂРјР°С†РёРё
 
 
-//// Внутриигровые ассеты интерфейса	
-// Фон
-char* gameBG = "./Images/BG2.png";                              // Фон во время игры
+//// Р’РЅСѓС‚СЂРёРёРіСЂРѕРІС‹Рµ Р°СЃСЃРµС‚С‹ РёРЅС‚РµСЂС„РµР№СЃР°	
+// Р¤РѕРЅ
+char* gameBG = "./Images/BG2.png";                              // Р¤РѕРЅ РІРѕ РІСЂРµРјСЏ РёРіСЂС‹
 
-// Низкий уровень угрозы							            
-char* uiBlue = "./Images/uiBlue.png";				            // Синий игровой UI
-char* menuBlue = "./Images/menuBlue.png";			            // Синяя кнопка главного меню
-char* menuHoverBlue = "./Images/menuHoverBlue.png";             // Синяя кнопка главного меню при наведении мыши
-char* soundOnBlue = "./Images/soundOnBlue.png";		            // Синяя кнопка "звук включен"
-char* soundOnHoverBlue = "./Images/soundOnHoverBlue.png";       // Синяя кнопка "звук включен" при наведении мыши
-char* soundOffBlue = "./Images/soundOffBlue.png";	            // Синяя кнопка "звук выключен"
-char* soundOffHoverBlue = "./Images/soundOffHoverBlue.png";     // Синяя кнопка "звук включен" при наведении мыши
-char* lifeBlue = "./Images/lifeBlue.png";                       // Синий индикатор жизней
+// РќРёР·РєРёР№ СѓСЂРѕРІРµРЅСЊ СѓРіСЂРѕР·С‹							            
+char* uiBlue = "./Images/uiBlue.png";				            // РЎРёРЅРёР№ РёРіСЂРѕРІРѕР№ UI
+char* menuBlue = "./Images/menuBlue.png";			            // РЎРёРЅСЏСЏ РєРЅРѕРїРєР° РіР»Р°РІРЅРѕРіРѕ РјРµРЅСЋ
+char* menuHoverBlue = "./Images/menuHoverBlue.png";             // РЎРёРЅСЏСЏ РєРЅРѕРїРєР° РіР»Р°РІРЅРѕРіРѕ РјРµРЅСЋ РїСЂРё РЅР°РІРµРґРµРЅРёРё РјС‹С€Рё
+char* soundOnBlue = "./Images/soundOnBlue.png";		            // РЎРёРЅСЏСЏ РєРЅРѕРїРєР° "Р·РІСѓРє РІРєР»СЋС‡РµРЅ"
+char* soundOnHoverBlue = "./Images/soundOnHoverBlue.png";       // РЎРёРЅСЏСЏ РєРЅРѕРїРєР° "Р·РІСѓРє РІРєР»СЋС‡РµРЅ" РїСЂРё РЅР°РІРµРґРµРЅРёРё РјС‹С€Рё
+char* soundOffBlue = "./Images/soundOffBlue.png";	            // РЎРёРЅСЏСЏ РєРЅРѕРїРєР° "Р·РІСѓРє РІС‹РєР»СЋС‡РµРЅ"
+char* soundOffHoverBlue = "./Images/soundOffHoverBlue.png";     // РЎРёРЅСЏСЏ РєРЅРѕРїРєР° "Р·РІСѓРє РІРєР»СЋС‡РµРЅ" РїСЂРё РЅР°РІРµРґРµРЅРёРё РјС‹С€Рё
+char* lifeBlue = "./Images/lifeBlue.png";                       // РЎРёРЅРёР№ РёРЅРґРёРєР°С‚РѕСЂ Р¶РёР·РЅРµР№
                                                                 
-// Средний уровень угрозы							            
-char* uiYellow = "./Images/uiYellow.png";                       // Жёлтый игровой UI
-char* menuYellow = "./Images/menuYellow.png";                   // Жёлтая кнопка главного меню
-char* menuHoverYellow = "./Images/menuHoverYellow.png";         // Жёлтая кнопка главного меню при наведении мыши
-char* soundOnYellow = "./Images/soundOnYellow.png";             // Жёлтая кнопка "звук включен"
-char* soundOnHoverYellow = "./Images/soundOnHoverYellow.png";   // Жёлтая кнопка "звук включен" при наведении мыши
-char* soundOffYellow = "./Images/soundOffYellow.png";           // Жёлтая кнопка "звук выключен"
-char* soundOffHoverYellow = "./Images/soundOffHoverYellow.png"; // Жёлтая кнопка "звук выключен" при наведении мыши
-char* lifeYellow = "./Images/lifeYellow.png";                   // Жёлтый индикатор жизней
+// РЎСЂРµРґРЅРёР№ СѓСЂРѕРІРµРЅСЊ СѓРіСЂРѕР·С‹							            
+char* uiYellow = "./Images/uiYellow.png";                       // Р–С‘Р»С‚С‹Р№ РёРіСЂРѕРІРѕР№ UI
+char* menuYellow = "./Images/menuYellow.png";                   // Р–С‘Р»С‚Р°СЏ РєРЅРѕРїРєР° РіР»Р°РІРЅРѕРіРѕ РјРµРЅСЋ
+char* menuHoverYellow = "./Images/menuHoverYellow.png";         // Р–С‘Р»С‚Р°СЏ РєРЅРѕРїРєР° РіР»Р°РІРЅРѕРіРѕ РјРµРЅСЋ РїСЂРё РЅР°РІРµРґРµРЅРёРё РјС‹С€Рё
+char* soundOnYellow = "./Images/soundOnYellow.png";             // Р–С‘Р»С‚Р°СЏ РєРЅРѕРїРєР° "Р·РІСѓРє РІРєР»СЋС‡РµРЅ"
+char* soundOnHoverYellow = "./Images/soundOnHoverYellow.png";   // Р–С‘Р»С‚Р°СЏ РєРЅРѕРїРєР° "Р·РІСѓРє РІРєР»СЋС‡РµРЅ" РїСЂРё РЅР°РІРµРґРµРЅРёРё РјС‹С€Рё
+char* soundOffYellow = "./Images/soundOffYellow.png";           // Р–С‘Р»С‚Р°СЏ РєРЅРѕРїРєР° "Р·РІСѓРє РІС‹РєР»СЋС‡РµРЅ"
+char* soundOffHoverYellow = "./Images/soundOffHoverYellow.png"; // Р–С‘Р»С‚Р°СЏ РєРЅРѕРїРєР° "Р·РІСѓРє РІС‹РєР»СЋС‡РµРЅ" РїСЂРё РЅР°РІРµРґРµРЅРёРё РјС‹С€Рё
+char* lifeYellow = "./Images/lifeYellow.png";                   // Р–С‘Р»С‚С‹Р№ РёРЅРґРёРєР°С‚РѕСЂ Р¶РёР·РЅРµР№
                                                         
-// Высокий уровень угрозы							    
-char* uiRed = "./Images/uiRed.png";							    // Красный игровой UI
-char* menuRed = "./Images/menuRed.png";						    // Красная кнопка главного меню
-char* menuHoverRed = "./Images/menuHoverRed.png";			    // Красная кнопка главного меню при наведении мыши
-char* soundOnRed = "./Images/soundOnRed.png";				    // Красная кнопка "звук включен"
-char* soundOnHoverRed = "./Images/soundOnHoverRed.png";         // Красная кнопка "звук включен" при наведении мыши
-char* soundOffRed = "./Images/soundOffRed.png";				    // Красная кнопка "звук выключен"
-char* soundOffHoverRed = "./Images/soundOffHoverRed.png";       // Красная кнопка "звук выключен" при наведении мыши
-char* lifeRed = "./Images/lifeRed.png";						    // Красный индикатор жизней
+// Р’С‹СЃРѕРєРёР№ СѓСЂРѕРІРµРЅСЊ СѓРіСЂРѕР·С‹							    
+char* uiRed = "./Images/uiRed.png";							    // РљСЂР°СЃРЅС‹Р№ РёРіСЂРѕРІРѕР№ UI
+char* menuRed = "./Images/menuRed.png";						    // РљСЂР°СЃРЅР°СЏ РєРЅРѕРїРєР° РіР»Р°РІРЅРѕРіРѕ РјРµРЅСЋ
+char* menuHoverRed = "./Images/menuHoverRed.png";			    // РљСЂР°СЃРЅР°СЏ РєРЅРѕРїРєР° РіР»Р°РІРЅРѕРіРѕ РјРµРЅСЋ РїСЂРё РЅР°РІРµРґРµРЅРёРё РјС‹С€Рё
+char* soundOnRed = "./Images/soundOnRed.png";				    // РљСЂР°СЃРЅР°СЏ РєРЅРѕРїРєР° "Р·РІСѓРє РІРєР»СЋС‡РµРЅ"
+char* soundOnHoverRed = "./Images/soundOnHoverRed.png";         // РљСЂР°СЃРЅР°СЏ РєРЅРѕРїРєР° "Р·РІСѓРє РІРєР»СЋС‡РµРЅ" РїСЂРё РЅР°РІРµРґРµРЅРёРё РјС‹С€Рё
+char* soundOffRed = "./Images/soundOffRed.png";				    // РљСЂР°СЃРЅР°СЏ РєРЅРѕРїРєР° "Р·РІСѓРє РІС‹РєР»СЋС‡РµРЅ"
+char* soundOffHoverRed = "./Images/soundOffHoverRed.png";       // РљСЂР°СЃРЅР°СЏ РєРЅРѕРїРєР° "Р·РІСѓРє РІС‹РєР»СЋС‡РµРЅ" РїСЂРё РЅР°РІРµРґРµРЅРёРё РјС‹С€Рё
+char* lifeRed = "./Images/lifeRed.png";						    // РљСЂР°СЃРЅС‹Р№ РёРЅРґРёРєР°С‚РѕСЂ Р¶РёР·РЅРµР№
 
-// Проигрыш
-char* defeat = "./Images/defeat.png";                           // Сплэш-скрин при поражении
-char* returnRed = "./Images/returnRed.png";                     // Красная кнопка перезапуска 
-char* returnHoverRed = "./Images/returnHoverRed.png";           // Красная кнопка перезапуска при наведении
-char* rankRed = "./Images/rankRed.png";                         // Красная кнопка таблицы рекордов
-char* rankHoverRed = "./Images/rankHoverRed.png";               // Красная кнопка таблицы рекордов при наведении
+// РџСЂРѕРёРіСЂС‹С€
+char* defeat = "./Images/defeat.png";                           // РЎРїР»СЌС€-СЃРєСЂРёРЅ РїСЂРё РїРѕСЂР°Р¶РµРЅРёРё
+char* returnRed = "./Images/returnRed.png";                     // РљСЂР°СЃРЅР°СЏ РєРЅРѕРїРєР° РїРµСЂРµР·Р°РїСѓСЃРєР° 
+char* returnHoverRed = "./Images/returnHoverRed.png";           // РљСЂР°СЃРЅР°СЏ РєРЅРѕРїРєР° РїРµСЂРµР·Р°РїСѓСЃРєР° РїСЂРё РЅР°РІРµРґРµРЅРёРё
+char* rankRed = "./Images/rankRed.png";                         // РљСЂР°СЃРЅР°СЏ РєРЅРѕРїРєР° С‚Р°Р±Р»РёС†С‹ СЂРµРєРѕСЂРґРѕРІ
+char* rankHoverRed = "./Images/rankHoverRed.png";               // РљСЂР°СЃРЅР°СЏ РєРЅРѕРїРєР° С‚Р°Р±Р»РёС†С‹ СЂРµРєРѕСЂРґРѕРІ РїСЂРё РЅР°РІРµРґРµРЅРёРё
 
-// Выигрыш
-char* victory = "./Images/victory.png";                         // Сплэш-скрин при победе
-char* returnBlue = "./Images/returnBlue.png";                   // Синяя кнопка перезапуска 
-char* returnHoverBlue = "./Images/returnHoverBlue.png";		    // Синяя кнопка перезапуска при наведении
-char* rankBlue = "./Images/rankBlue.png";					    // Синяя кнопка таблицы рекордов
-char* rankHoverBlue = "./Images/rankHoverBlue.png";			    // Синяя кнопка таблицы рекордов при наведении
+// Р’С‹РёРіСЂС‹С€
+char* victory = "./Images/victory.png";                         // РЎРїР»СЌС€-СЃРєСЂРёРЅ РїСЂРё РїРѕР±РµРґРµ
+char* returnBlue = "./Images/returnBlue.png";                   // РЎРёРЅСЏСЏ РєРЅРѕРїРєР° РїРµСЂРµР·Р°РїСѓСЃРєР° 
+char* returnHoverBlue = "./Images/returnHoverBlue.png";		    // РЎРёРЅСЏСЏ РєРЅРѕРїРєР° РїРµСЂРµР·Р°РїСѓСЃРєР° РїСЂРё РЅР°РІРµРґРµРЅРёРё
+char* rankBlue = "./Images/rankBlue.png";					    // РЎРёРЅСЏСЏ РєРЅРѕРїРєР° С‚Р°Р±Р»РёС†С‹ СЂРµРєРѕСЂРґРѕРІ
+char* rankHoverBlue = "./Images/rankHoverBlue.png";			    // РЎРёРЅСЏСЏ РєРЅРѕРїРєР° С‚Р°Р±Р»РёС†С‹ СЂРµРєРѕСЂРґРѕРІ РїСЂРё РЅР°РІРµРґРµРЅРёРё
 
-//// Внутриигровые модели
-// Шарики
+//// Р’РЅСѓС‚СЂРёРёРіСЂРѕРІС‹Рµ РјРѕРґРµР»Рё
+// РЁР°СЂРёРєРё
 #if (MODELS == 1)
 char* color1 = "./Images/Earth.png";
 char* color2 = "./Images/Saturn.png";
