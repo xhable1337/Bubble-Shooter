@@ -21,5 +21,13 @@
     <ClCompile Include="Bubble_shooter.c">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="resource.c">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="resource.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -25,12 +25,15 @@
 #include <math.h>
 #include <stdlib.h>
 
+#include "resource.h"
+
 
 
 #define DELAY 5
 
 #define WAV_PATH "./Sounds/Kick-Drum-1.wav"
-#define MUS_PATH "./Sounds/NES Ver. BAYONETTA - Fly Me To The Moon ( Climax Mix ).mp3"
+//#define MUS_PATH "./Sounds/NES Ver. BAYONETTA - Fly Me To The Moon ( Climax Mix ).mp3"
+#define MUS_PATH "./Sounds/Kick-Drum-1.wav"
 #define TTF_PATH "./TTF/font.ttf"
 
 /*
@@ -68,6 +71,7 @@ const int true = 1;
 /*Image size constants*/
 const int IMAGE_WIDTH = 32;
 const int IMAGE_HEIGHT = 32;
+
 
 typedef struct _BACKGROUND
 {
@@ -226,9 +230,6 @@ NPC createNPC(float posY, float posX, int indexY, int indexX, int color, SDL_Sur
 /*Create UI element*/
 UIELEMENT createELEMENT(float posX, float posY, int color, SDL_Surface *image);
 
-/*Prepares grid*/
-void prepareGrid();
-
 /*Move PLAYER*/
 void movePLAYER();
 
@@ -293,7 +294,7 @@ void printGrid();
 void gridDown();
 
 /*Creates grid*/
-void createGrid();
+void createGrid(int ballY);
 
 /*Gets Background surface*/
 void makeBACKGROUND();
@@ -312,9 +313,6 @@ void drawBACKGROUND(BACKGROUND b);
 
 /*Displayes UI element on screen*/
 void drawELEMENT(UIELEMENT u, int imageW, int imageH);
-
-/*(tries to) draw a star*/
-void DrawStar();
 
 /*Game Function*/
 void Game();
@@ -517,115 +515,115 @@ NPC* checkCollision()
 
 NPC* NPCCollision()
 {
-  int m, n; /* m = index added to NPC i ; n = index added to NPC j */
-	int ballcolor;
-	NPC *colNPC, *newNPC;
+    int m, n; /* m = index added to NPC i ; n = index added to NPC j */
+    int ballcolor;
+    NPC* colNPC, * newNPC;
 
-	colNPC = checkCollision();
+    colNPC = checkCollision();
 
-  /*
-    COLTYPE CODES:
-         6 1
-        5 O 2
-         4 3
-  */
+    /*
+      COLTYPE CODES:
+           6 1
+          5 O 2
+           4 3
+    */
 
     if (colNPC)
     {
-      /*printf("Colidiu!\n");*/
-        switch(colNPC->coltype)
+        /*printf("Colidiu!\n");*/
+        switch (colNPC->coltype)
         {
-            case 1:
-                if (colNPC->indexY%2 == 0){
-                    m = -1;
-                    n = 0;
-                }
-                else{
-                    m = -1;
-                    n = +1;
-                }
-            break;
-            case 2:
-                m = 0;
+        case 1:
+            if (colNPC->indexY % 2 == 0) {
+                m = -1;
+                n = 0;
+            }
+            else {
+                m = -1;
                 n = +1;
+            }
             break;
-            case 3:
-                if (colNPC->indexY%2 == 0 || colNPC->indexX == 18){
-                    m = +1;
-                    n = 0;
-                }
-                else{
-                    m = +1;
-                    n = +1;
-                }
+        case 2:
+            m = 0;
+            n = +1;
             break;
-            case 4:
-                if (colNPC->indexY%2 == 0 && colNPC->indexX != 1){
-                    m = +1;
-                    n = -1;
-                }
-                else{
-                    m = +1;
-                    n = 0;
-                }
+        case 3:
+            if (colNPC->indexY % 2 == 0 || colNPC->indexX == 18) {
+                m = +1;
+                n = 0;
+            }
+            else {
+                m = +1;
+                n = +1;
+            }
             break;
-            case 5:
-                m = 0;
+        case 4:
+            if (colNPC->indexY % 2 == 0 && colNPC->indexX != 1) {
+                m = +1;
                 n = -1;
+            }
+            else {
+                m = +1;
+                n = 0;
+            }
             break;
-            case 6:
-                if (colNPC->indexY%2 == 0){
-                    m = -1;
-                    n = -1;
-                }
-                else{
-                    m = -1;
-                    n = 0;
-                }
+        case 5:
+            m = 0;
+            n = -1;
+            break;
+        case 6:
+            if (colNPC->indexY % 2 == 0) {
+                m = -1;
+                n = -1;
+            }
+            else {
+                m = -1;
+                n = 0;
+            }
         }
 
         /*(making newNPC)*/
-        ballgrid[(colNPC->indexY)+m][(colNPC->indexX)+n] = createNPC(
-            ((colNPC->indexY)+m) * (IMAGE_HEIGHT-5),
+        ballgrid[(colNPC->indexY) + m][(colNPC->indexX) + n] = createNPC(
+            ((colNPC->indexY) + m) * (IMAGE_HEIGHT - 5),
             (colNPC->indexX) * IMAGE_WIDTH,
-            ((colNPC->indexY)+m),
-            ((colNPC->indexX)+n),
+            ((colNPC->indexY) + m),
+            ((colNPC->indexX) + n),
             ball.color,
             ball.image
         );
-        newNPC = &ballgrid[(colNPC->indexY)+m][(colNPC->indexX)+n];
+        newNPC = &ballgrid[(colNPC->indexY) + m][(colNPC->indexX) + n];
         /*from now on, newNPC can use this pointer*/
 
         ball.image = NULL;
 
         /*repositioning*/
-        if(colNPC->coltype <= 3)
-            newNPC->posX += IMAGE_WIDTH/2;
-        if((colNPC->coltype == 2 || colNPC->coltype == 5) && ((colNPC->indexY)%2 == 1))
-            newNPC->posX += IMAGE_WIDTH/2;
-        if(colNPC->coltype == 5){
-            newNPC->posX -= IMAGE_WIDTH/2;
+        if (colNPC->coltype <= 3)
+            newNPC->posX += IMAGE_WIDTH / 2;
+        if ((colNPC->coltype == 2 || colNPC->coltype == 5) && ((colNPC->indexY) % 2 == 1))
+            newNPC->posX += IMAGE_WIDTH / 2;
+        if (colNPC->coltype == 5) {
+            newNPC->posX -= IMAGE_WIDTH / 2;
         }
-        newNPC->posX += n*IMAGE_WIDTH/2;
+        newNPC->posX += n * IMAGE_WIDTH / 2;
 
-        newNPC->posX -= IMAGE_WIDTH/4;
+        newNPC->posX -= IMAGE_WIDTH / 4;
 
 
-        newNPC->centerX = newNPC->posX + IMAGE_WIDTH/2;
-        newNPC->centerY = newNPC->posY + IMAGE_WIDTH/2;
+        newNPC->centerX = newNPC->posX + IMAGE_WIDTH / 2;
+        newNPC->centerY = newNPC->posY + IMAGE_WIDTH / 2;
 
         /*Checking if there's a ball over the border*/
-        if (newNPC->posX < IMAGE_WIDTH && (newNPC->indexY)%2 == 1){
-            newNPC->posX += IMAGE_WIDTH/2;
+        if (newNPC->posX < IMAGE_WIDTH && (newNPC->indexY) % 2 == 1) {
+            newNPC->posX += IMAGE_WIDTH / 2;
         }
-        if (newNPC->posX > SCREEN_WIDTH-(BORDER + 3*IMAGE_WIDTH/2) && (newNPC->indexY)%2 == 0){
-            newNPC->posX -= IMAGE_WIDTH/2;
+        if (newNPC->posX > SCREEN_WIDTH - (BORDER + 3 * IMAGE_WIDTH / 2) && (newNPC->indexY) % 2 == 0) {
+            newNPC->posX -= IMAGE_WIDTH / 2;
         }
 
         ballCount = 0;
         currentCount = 0;
         checkDestruction(newNPC, newNPC->color);
-    		colNPC->coltype = 0;
+        colNPC->coltype = 0;
 
         ball.color = nextball.color;
         ball.image = nextball.image;
@@ -639,21 +637,21 @@ NPC* NPCCollision()
 }
 
 /*Create UI element*/
-UIELEMENT createELEMENT(float posX, float posY, int color, SDL_Surface *image)
+UIELEMENT createELEMENT(float posX, float posY, int color, SDL_Surface* image)
 {
-  UIELEMENT u;
+    UIELEMENT u;
 
-  u.posX = posX;
-  u.posY = posY;
-  u.color = color;
-  u.image = image;
-  return u;
+    u.posX = posX;
+    u.posY = posY;
+    u.color = color;
+    u.image = image;
+    return u;
 }
 
 /*Create PLAYER*/
-PLAYER createPLAYER( float posX, float posY,
-					 float stepX, float stepY,
-					 int color, SDL_Surface *image)
+PLAYER createPLAYER(float posX, float posY,
+					float stepX, float stepY,
+					int color, SDL_Surface *image)
 {
     PLAYER p;
 
@@ -663,8 +661,8 @@ PLAYER createPLAYER( float posX, float posY,
     p.stepY = stepY;
     p.color = color;
     p.image = image;
-    p.centerX = posX + IMAGE_WIDTH/2;
-    p.centerY = posY + IMAGE_HEIGHT/2;
+    p.centerX = posX + IMAGE_WIDTH / 2;
+    p.centerY = posY + IMAGE_HEIGHT / 2;
     return p;
 }
 
@@ -681,8 +679,8 @@ NPC createNPC(float posY, float posX,
 	n.indexX = indexX;
 	n.color = color;
 	n.image = image;
-	n.centerX = posX + IMAGE_WIDTH/2;
-	n.centerY = posY + IMAGE_HEIGHT/2;
+	n.centerX = posX + IMAGE_WIDTH / 2;
+	n.centerY = posY + IMAGE_HEIGHT / 2;
 	n.coltype = 0;
     n.remain = 0;
 
@@ -693,9 +691,9 @@ NPC createNPC(float posY, float posX,
 /*makes BACKGROUND*/
 void makeBACKGROUND()
 {
-  if (interface == 1) backg.image = loadSurface( "./Images/menuBG.png" );
-  if (interface == 2) backg.image = loadSurface( "./Images/BG2.png" );
-  if (interface == 3 || interface == 4) backg.image = loadSurface( "./Images/BG.png");
+  if (interface == 1) backg.image = loadSurface(menuBG);
+  if (interface == 2) backg.image = loadSurface(gameBG);
+  if (interface == 3 || interface == 4) backg.image = loadSurface(menuBG2);
 }
 
 /*
@@ -721,26 +719,26 @@ SDL_Surface* GetColor(int color)
 {
     SDL_Surface* ColorSurface = NULL;
 
-    switch(color)
+    switch (color)
     {
-        case 1:
-            ColorSurface = loadSurface( "./Images/Earth.png" );
-            break;
-        case 2:
-            ColorSurface = loadSurface( "./Images/Saturn.png" );
-            break;
-        case 3:
-            ColorSurface = loadSurface( "./Images/Neptune.png" );
-            break;
-        case 4:
-            ColorSurface = loadSurface( "./Images/Venus.png" );
-            break;
-        case 5:
-            ColorSurface = loadSurface( "./Images/Jupiter.png" );
-            break;
-        case 6:
-            ColorSurface = loadSurface( "./Images/Mars.png" );
-            break;
+    case 1:
+        ColorSurface = loadSurface(color1);
+        break;
+    case 2:
+        ColorSurface = loadSurface(color2);
+        break;
+    case 3:
+        ColorSurface = loadSurface(color3);
+        break;
+    case 4:
+        ColorSurface = loadSurface(color4);
+        break;
+    case 5:
+        ColorSurface = loadSurface(color5);
+        break;
+    case 6:
+        ColorSurface = loadSurface(color6);
+        break;
     }
 
     return ColorSurface;
@@ -766,15 +764,15 @@ void cleanGrid(){
 /*Create Grid*/
 void createGrid(int ballY)
 {
-	int i;
+    int i;
 
     /*LEMBRAR DE TROCAR ISTO QUANDO FOR PARA MATRIZ*/
-	for (i = 1; i < ballY; i++)
-	{
+    for (i = 1; i < ballY; i++)
+    {
         gridDown();
-        SDL_Delay(10*DELAY);
+        SDL_Delay(10 * DELAY);
         RefreshScreen();
-	}
+    }
 }
 
 /*Displays player on screen*/
@@ -793,41 +791,41 @@ void drawPLAYER(PLAYER p)
 /*Displayes Background on screen*/
 void drawBACKGROUND(BACKGROUND b)
 {
-	SDL_Rect srcRect, dstRect;
-	srcRect.x = 0;
-	srcRect.y = 0;
-	srcRect.w = SCREEN_WIDTH;
-	srcRect.h = SCREEN_HEIGHT;
-	dstRect.x = 0;
-	dstRect.y = 0;
-	SDL_BlitSurface( b.image, &srcRect, gScreenSurface, &dstRect );
+    SDL_Rect srcRect, dstRect;
+    srcRect.x = 0;
+    srcRect.y = 0;
+    srcRect.w = SCREEN_WIDTH;
+    srcRect.h = SCREEN_HEIGHT;
+    dstRect.x = 0;
+    dstRect.y = 0;
+    SDL_BlitSurface(b.image, &srcRect, gScreenSurface, &dstRect);
 }
 
 /*Displayes UI element on screen*/
 void drawELEMENT(UIELEMENT u, int imageW, int imageH)
 {
-	SDL_Rect srcRect, dstRect;
-	srcRect.x = 0;
-	srcRect.y = 0;
-	srcRect.w = imageW;
-	srcRect.h = imageH;
-	dstRect.x = u.posX;
-	dstRect.y = u.posY;
-	SDL_BlitSurface( u.image, &srcRect, gScreenSurface, &dstRect );
+    SDL_Rect srcRect, dstRect;
+    srcRect.x = 0;
+    srcRect.y = 0;
+    srcRect.w = imageW;
+    srcRect.h = imageH;
+    dstRect.x = u.posX;
+    dstRect.y = u.posY;
+    SDL_BlitSurface(u.image, &srcRect, gScreenSurface, &dstRect);
 }
 
 /*Displays NPC on screen*/
 void drawNPC(NPC n)
 {
-    if(n.color)
+    if (n.color)
     {
-    	SDL_Rect srcRect, dstRect;
-    	srcRect.x = 0; srcRect.y = 0;
+        SDL_Rect srcRect, dstRect;
+        srcRect.x = 0; srcRect.y = 0;
         srcRect.w = IMAGE_WIDTH;
         srcRect.h = IMAGE_HEIGHT;
         dstRect.x = n.posX;
         dstRect.y = n.posY;
-    	SDL_BlitSurface( n.image, &srcRect, gScreenSurface, &dstRect );
+        SDL_BlitSurface(n.image, &srcRect, gScreenSurface, &dstRect);
     }
 }
 
@@ -837,19 +835,19 @@ void RefreshScreen()
     drawBACKGROUND(backg);
 
     /*Main Menu Refresh Screen*/
-    if (interface == 1){
+    if (interface == 1) {
         drawELEMENT(SoundElement, 38, 38);
         drawELEMENT(ArrowElement, 38, 38);
     }
 
     /*Play Refresh Screen*/
-    if(interface == 2){
+    if (interface == 2) {
         GetScore();
         drawELEMENT(PMUI, SCREEN_WIDTH, SCREEN_HEIGHT);
         drawPLAYER(ball);
         drawELEMENT(SoundElement, 38, 38);
         drawELEMENT(EGelement, 38, 38);
-        for (i=0; i < health; i++){
+        for (i = 0; i < health; i++) {
             drawELEMENT(lifeballs[i], 8, 10);
         }
 
@@ -858,7 +856,7 @@ void RefreshScreen()
                 drawNPC(ballgrid[i][j]);
         drawELEMENT(nextball, IMAGE_WIDTH, IMAGE_HEIGHT);
 
-        if(play == -1){
+        if (play == -1) {
             drawELEMENT(EGUI, 200, 200);
             drawELEMENT(EGMen, 38, 38);
             drawELEMENT(EGR, 38, 38);
@@ -868,40 +866,40 @@ void RefreshScreen()
     }
 
     /*Highscores Refresh Screen*/
-    if(interface == 3){
+    if (interface == 3) {
         drawELEMENT(RankElement, 440, 440);
         drawELEMENT(EGelement, 38, 38);
     }
 
     /*Highscores Refresh Screen*/
-    if(interface == 4){
+    if (interface == 4) {
         drawELEMENT(CredElement, 300, 200);
         drawELEMENT(EGelement, 38, 38);
     }
 
     /*Update the surface*/
-    SDL_UpdateWindowSurface( gWindow );
+    SDL_UpdateWindowSurface(gWindow);
 
     /* Not so good solution, depends on your computer*/
     SDL_Delay(DELAY);
 }
 
 
-void shoot(){
+void shoot() {
     int Mx, My;
 
-    SDL_GetMouseState( &Mx, &My );
+    SDL_GetMouseState(&Mx, &My);
 
     /*Click nao funciona se My dentro de safe zone*/
-    if(My > SCREEN_HEIGHT- 45 ) return;
+    if (My > SCREEN_HEIGHT - 45) return;
 
     /*Reinterpretando Mx e My com origem no centro de ball*/
-    Mx = Mx - SCREEN_WIDTH/2;
-    My = SCREEN_HEIGHT - My - IMAGE_HEIGHT/2;
+    Mx = Mx - SCREEN_WIDTH / 2;
+    My = SCREEN_HEIGHT - My - IMAGE_HEIGHT / 2;
 
     /*Reinterpretando x e y para que a hipotenusa seja 1 (calculando o step)*/
-    ball.stepX = Mx / sqrt((Mx*Mx) + (My*My));
-    ball.stepY = -My / sqrt((Mx*Mx) + (My*My));
+    ball.stepX = Mx / sqrt((Mx * Mx) + (My * My));
+    ball.stepY = -My / sqrt((Mx * Mx) + (My * My));
 
     /* CASO NECESSARIO, SABER QUAL STEPX E STEPY
     printf("step X = %f\nstep Y = %f\n", ball.stepX, ball.stepY);
@@ -909,25 +907,25 @@ void shoot(){
     */
 
     /*
-     * CRIANDO UMA EXCEÇÃO PARA ANGULOS EXTREMOS (PROXIMOS DE ACIMA DE 172 E ABAIXO DE 8 GRAUS)
-     * sen 8 = 0.99
-     * cos 8 = -0.139
-     */
+    * CRIANDO UMA EXCEÇÃO PARA ANGULOS EXTREMOS (PROXIMOS DE ACIMA DE 172 E ABAIXO DE 8 GRAUS)
+    * sen 8 = 0.99
+    * cos 8 = -0.139
+    */
 
     if (ball.stepX > 0.997)
     {
-    	ball.stepX = 0.997;
-    	ball.stepY = -0.0774;
+        ball.stepX = 0.997;
+        ball.stepY = -0.0774;
     }
 
     if (ball.stepX < -0.997)
     {
-    	ball.stepX = -0.997;
-    	ball.stepY = -0.0774;
+        ball.stepX = -0.997;
+        ball.stepY = -0.0774;
     }
 
-    ball.stepY*= MSPEED;
-    ball.stepX*= MSPEED;
+    ball.stepY *= MSPEED;
+    ball.stepX *= MSPEED;
     clicked = 1;
     /* P/ TESTAR A BOLINHA IR RETO
       ball.stepX = 0;
@@ -940,7 +938,7 @@ void Game(){
     else Mix_VolumeMusic(100);
 
     switch(interface){
-        case 1: /*MainMenu*/
+        case 1: /*Main Menu*/
             MainMenu();
             break;
         case 2: /*Play*/
@@ -956,19 +954,21 @@ void Game(){
     RefreshScreen();
 }
 
-void MainMenu(){
+void MainMenu() {
     SDL_Event e;
 
-    while( SDL_PollEvent(&e) != 0)
+    while (SDL_PollEvent(&e) != 0)
     {
         Buttons(e);
-        switch(e.type){
-            case SDL_QUIT:
-                quit = true;
+        switch (e.type) {
+        case SDL_QUIT:
+            quit = true;
             break;
-            case SDL_KEYDOWN:
-                if(e.key.keysym.sym == SDLK_ESCAPE)
-                    quit = true;
+        case SDL_KEYDOWN:
+            if (e.key.keysym.sym == SDLK_ESCAPE)
+                quit = true;
+            else if (e.key.keysym.sym == SDLK_F9)
+                GetInput(e);
             break;
         }
     }
@@ -1015,6 +1015,7 @@ void Buttons(SDL_Event e){
     int ballcolor;
 
     SDL_GetMouseState( &Mx, &My );
+    // interface == 1: Главное меню
     if(interface == 1){
         /*Sound Element Button*/
         SoundElement.posX = 3;
@@ -1026,15 +1027,15 @@ void Buttons(SDL_Event e){
             else Sound = true;
             }
             if (Sound == true)
-                SoundElement.image = loadSurface("./Images/soundOnHoverBlue.png");
+                SoundElement.image = loadSurface(soundOnHoverBlue);
             else if (Sound == false)
-                SoundElement.image = loadSurface("./Images/soundOffHoverBlue.png");
+                SoundElement.image = loadSurface(soundOffHoverBlue);
             }
         else{
             if (Sound == true)
-                SoundElement.image = loadSurface("./Images/soundOnBlue.png");
+                SoundElement.image = loadSurface(soundOnBlue);
             else if (Sound == false)
-                SoundElement.image = loadSurface("./Images/soundOffBlue.png");
+                SoundElement.image = loadSurface(soundOffBlue);
             }
 
         /*Main Menu Buttons*/
@@ -1042,7 +1043,7 @@ void Buttons(SDL_Event e){
             ArrowElement.image = NULL;
         }
         else if(Mx > 110 && Mx < 210){
-            ArrowElement.image = loadSurface("./Images/arrow.png");
+            ArrowElement.image = loadSurface(arrow);
             if(My > 210 && My < 235){
                 ArrowElement.posY = 208;
                 if(e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_LEFT){
@@ -1098,21 +1099,21 @@ void Buttons(SDL_Event e){
 
               cleanGrid();
               makeBACKGROUND();
-              EGelement.image = loadSurface("./Images/menuBlue.png");
+              EGelement.image = loadSurface(menuBlue);
             }
             if(!(Mx < (268) && Mx > (238) && My < (274) && My > (238) )){
                 switch(ThreatLevel){
-                    case 1: EGelement.image = loadSurface("./Images/menuHoverBlue.png"); break;
-                    case 2: EGelement.image = loadSurface("./Images/menuHoverYellow.png"); break;
-                    case 3: EGelement.image = loadSurface("./Images/menuHoverRed.png"); break;
+                    case 1: EGelement.image = loadSurface(menuHoverBlue); break;
+                    case 2: EGelement.image = loadSurface(menuHoverYellow); break;
+                    case 3: EGelement.image = loadSurface(menuHoverRed); break;
                 }
             }
         }
             else{
                 switch(ThreatLevel){
-                    case 1: EGelement.image = loadSurface("./Images/menuBlue.png"); break;
-                    case 2: EGelement.image = loadSurface("./Images/menuYellow.png"); break;
-                    case 3: EGelement.image = loadSurface("./Images/menuRed.png"); break;
+                    case 1: EGelement.image = loadSurface(menuBlue); break;
+                    case 2: EGelement.image = loadSurface(menuYellow); break;
+                    case 3: EGelement.image = loadSurface(menuRed); break;
                 }
             }
 
@@ -1127,32 +1128,32 @@ void Buttons(SDL_Event e){
               }
               if (Sound == true){
                   switch(ThreatLevel){
-                      case 1: SoundElement.image = loadSurface("./Images/soundOnHoverBlue.png"); break;
-                      case 2: SoundElement.image = loadSurface("./Images/soundOnHoverYellow.png"); break;
-                      case 3: SoundElement.image = loadSurface("./Images/soundOnHoverRed.png"); break;
+                      case 1: SoundElement.image = loadSurface(soundOnHoverBlue); break;
+                      case 2: SoundElement.image = loadSurface(soundOnHoverYellow); break;
+                      case 3: SoundElement.image = loadSurface(soundOnHoverRed); break;
                   }
               }
               else if (Sound == false){
                   switch(ThreatLevel){
-                      case 1: SoundElement.image = loadSurface("./Images/soundOffHoverBlue.png"); break;
-                      case 2: SoundElement.image = loadSurface("./Images/soundOffHoverYellow.png"); break;
-                      case 3: SoundElement.image = loadSurface("./Images/soundOffHoverRed.png"); break;
+                      case 1: SoundElement.image = loadSurface(soundOffHoverBlue); break;
+                      case 2: SoundElement.image = loadSurface(soundOffHoverYellow); break;
+                      case 3: SoundElement.image = loadSurface(soundOffHoverRed); break;
                   }
               }
           }
           else{
               if (Sound == true){
                   switch(ThreatLevel){
-                      case 1: SoundElement.image = loadSurface("./Images/soundOnBlue.png"); break;
-                      case 2: SoundElement.image = loadSurface("./Images/soundOnYellow.png"); break;
-                      case 3: SoundElement.image = loadSurface("./Images/soundOnRed.png"); break;
+                      case 1: SoundElement.image = loadSurface(soundOnBlue); break;
+                      case 2: SoundElement.image = loadSurface(soundOnYellow); break;
+                      case 3: SoundElement.image = loadSurface(soundOnRed); break;
                   }
               }
               else if (Sound == false){
                   switch(ThreatLevel){
-                      case 1: SoundElement.image = loadSurface("./Images/soundOffBlue.png"); break;
-                      case 2: SoundElement.image = loadSurface("./Images/soundOffYellow.png"); break;
-                      case 3: SoundElement.image = loadSurface("./Images/soundOffRed.png"); break;
+                      case 1: SoundElement.image = loadSurface(soundOffBlue); break;
+                      case 2: SoundElement.image = loadSurface(soundOffYellow); break;
+                      case 3: SoundElement.image = loadSurface(soundOffRed); break;
                   }
               }
           }
@@ -1160,19 +1161,19 @@ void Buttons(SDL_Event e){
           /*EGMen Button*/
           if(Mx < (268) && Mx > (238)
           && My < (274) && My > (238)){
-              if(ThreatLevel == 3) EGMen.image = loadSurface("./Images/menuHoverRed.png");
-              if(ThreatLevel == 1) EGMen.image = loadSurface("./Images/menuHoverBlue.png");
+              if(ThreatLevel == 3) EGMen.image = loadSurface(menuHoverRed);
+              if(ThreatLevel == 1) EGMen.image = loadSurface(menuHoverBlue);
           }
           else{
-              if(ThreatLevel == 3) EGMen.image = loadSurface("./Images/menuRed.png");
-              if(ThreatLevel == 1) EGMen.image = loadSurface("./Images/menuBlue.png");
+              if(ThreatLevel == 3) EGMen.image = loadSurface(menuRed);
+              if(ThreatLevel == 1) EGMen.image = loadSurface(menuBlue);
           }
 
           /*Replay Button*/
           if(Mx < (335) && Mx > (305)
           && My < (306) && My > (272)){
-              if(ThreatLevel == 3) EGR.image = loadSurface("./Images/returnHoverRed.png");
-              if(ThreatLevel == 1) EGR.image = loadSurface("./Images/returnHoverBlue.png");
+              if(ThreatLevel == 3) EGR.image = loadSurface(returnHoverRed);
+              if(ThreatLevel == 1) EGR.image = loadSurface(returnHoverBlue);
               if(e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_LEFT && play == -1){
                 EGUI.image = NULL;
                 EGR.image = NULL;
@@ -1183,8 +1184,8 @@ void Buttons(SDL_Event e){
             }
           }
           else{
-              if(ThreatLevel == 3) EGR.image = loadSurface("./Images/returnRed.png");
-              if(ThreatLevel == 1) EGR.image = loadSurface("./Images/returnBlue.png");
+              if(ThreatLevel == 3) EGR.image = loadSurface(returnRed);
+              if(ThreatLevel == 1) EGR.image = loadSurface(returnBlue);
           }
 
           /*Ranking Button
@@ -1192,8 +1193,8 @@ void Buttons(SDL_Event e){
           238, 34*/
           if(Mx < (402) && Mx > (372)
           && My < (274) && My > (238)){
-              if(ThreatLevel == 3) EGRank.image = loadSurface("./Images/rankHoverRed.png");
-              if(ThreatLevel == 1) EGRank.image = loadSurface("./Images/rankHoverBlue.png");
+              if(ThreatLevel == 3) EGRank.image = loadSurface(rankHoverRed);
+              if(ThreatLevel == 1) EGRank.image = loadSurface(rankHoverBlue);
               if(e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_LEFT && play == -1){
                 EGUI.image = NULL;
                 EGR.image = NULL;
@@ -1207,13 +1208,13 @@ void Buttons(SDL_Event e){
               }
           }
           else{
-              if(ThreatLevel == 3) EGRank.image = loadSurface("./Images/rankRed.png");
-              if(ThreatLevel == 1) EGRank.image = loadSurface("./Images/rankBlue.png");
+              if(ThreatLevel == 3) EGRank.image = loadSurface(rankRed);
+              if(ThreatLevel == 1) EGRank.image = loadSurface(rankBlue);
           }
     }
 }
 
-void Play(){
+void Play() {
     SDL_Event e;
     interface = 2;
 
@@ -1470,123 +1471,123 @@ SDL_Surface* loadSurface( char *path )
 
 int PrepareGame()
 {
-  int ballcolor;
-  int i;
+    int ballcolor;
+    int i;
 
-  /*Start up SDL and create window*/
-  if( !init() )
-  {
-      printf( "Failed to initialize!\n" );
-      return 1;
-  }
-
-
-  ballcolor = rand() % COLORS + 1;
-  BallSurface = GetColor(ballcolor);
-
-  /*Load media*/
-  if( !loadMedia() )
-  {
-      printf( "Failed to load media!\n" );
-      return 2;
-  }
+    /*Start up SDL and create window*/
+    if (!init())
+    {
+        printf("Failed to initialize!\n");
+        return 1;
+    }
 
 
-  interface = 1;
-  /*####*/
-  Sound = true;
+    ballcolor = rand() % COLORS + 1;
+    BallSurface = GetColor(ballcolor);
 
-  /*Create Background*/
-  makeBACKGROUND();
+    /*Load media*/
+    if (!loadMedia())
+    {
+        printf("Failed to load media!\n");
+        return 2;
+    }
 
-  /*Create PLAYER*/
 
-  ball = createPLAYER((SCREEN_WIDTH/2 - IMAGE_WIDTH/2),
-                   (SCREEN_HEIGHT - IMAGE_HEIGHT) - 4,
-                    0,
-                    0,
-                    ballcolor,
-                    GetColor(ballcolor));
+    interface = 1;
+    /*####*/
+    Sound = true;
 
-  /*Create nextball*/
-  ballcolor = rand() % COLORS + 1;
-  BallSurface = GetColor(ballcolor);
+    /*Create Background*/
+    makeBACKGROUND();
 
-  nextball = createELEMENT(
-              193,
-              (SCREEN_HEIGHT - IMAGE_HEIGHT) + 1,
-              ballcolor,
-              GetColor(ballcolor));
+    /*Create PLAYER*/
 
-  for(i=0; i<5; i++){
-    lifeballs[i] = createELEMENT(
-                    (SCREEN_WIDTH/3) - 24 + (i*7) + 56,
-                    (i%2)?(SCREEN_HEIGHT - IMAGE_HEIGHT) + 13:(SCREEN_HEIGHT - IMAGE_HEIGHT) +1,
-                    0,
-                    loadSurface("./Images/LifeBlue.png"));
-  }
+    ball = createPLAYER((SCREEN_WIDTH / 2 - IMAGE_WIDTH / 2),
+        (SCREEN_HEIGHT - IMAGE_HEIGHT) - 4,
+        0,
+        0,
+        ballcolor,
+        GetColor(ballcolor));
 
-  SoundElement = createELEMENT(
-                28 + 4,
-                (SCREEN_HEIGHT - 41) + 6,
-                0,
-                NULL);
+    /*Create nextball*/
+    ballcolor = rand() % COLORS + 1;
+    BallSurface = GetColor(ballcolor);
 
-  EGelement = createELEMENT(
-                  SCREEN_WIDTH - 2*IMAGE_WIDTH -2 + 4,
-                  (SCREEN_HEIGHT - 41) + 6,
-                  0,
-                  NULL);
+    nextball = createELEMENT(
+        193,
+        (SCREEN_HEIGHT - IMAGE_HEIGHT) + 1,
+        ballcolor,
+        GetColor(ballcolor));
 
-  ArrowElement = createELEMENT(
-                    79,
-                    -38,
-                    0,
-                    NULL);
+    for (i = 0; i < 5; i++) {
+        lifeballs[i] = createELEMENT(
+            (SCREEN_WIDTH / 3) - 24 + (i * 7) + 56,
+            (i % 2) ? (SCREEN_HEIGHT - IMAGE_HEIGHT) + 13 : (SCREEN_HEIGHT - IMAGE_HEIGHT) + 1,
+            0,
+            loadSurface(lifeBlue));
+    }
 
-  PMUI = createELEMENT(
-                    0,
-                    0,
-                    0,
-                    NULL);
+    SoundElement = createELEMENT(
+        28 + 4,
+        (SCREEN_HEIGHT - 41) + 6,
+        0,
+        NULL);
 
-  EGUI = createELEMENT(
-                    SCREEN_WIDTH/2 - 100,
-                    SCREEN_HEIGHT/2 - 125,
-                    0,
-                    NULL);
+    EGelement = createELEMENT(
+        SCREEN_WIDTH - 2 * IMAGE_WIDTH - 2 + 4,
+        (SCREEN_HEIGHT - 41) + 6,
+        0,
+        NULL);
 
- EGMen = createELEMENT(
-                    238,
-                    238,
-                    0,
-                    NULL);
+    ArrowElement = createELEMENT(
+        79,
+        -38,
+        0,
+        NULL);
 
- EGR = createELEMENT(
-                    305,
-                    272,
-                    0,
-                    NULL);
+    PMUI = createELEMENT(
+        0,
+        0,
+        0,
+        NULL);
 
- EGRank = createELEMENT(
-                    372,
-                    238,
-                    0,
-                    NULL);
+    EGUI = createELEMENT(
+        SCREEN_WIDTH / 2 - 100,
+        SCREEN_HEIGHT / 2 - 125,
+        0,
+        NULL);
 
- CredElement = createELEMENT(
-                    SCREEN_WIDTH/2-150,
-                    SCREEN_HEIGHT/2-100,
-                    0,
-                    loadSurface("./Images/credits.png"));
+    EGMen = createELEMENT(
+        238,
+        238,
+        0,
+        NULL);
 
- RankElement = createELEMENT(
-                    SCREEN_WIDTH/2-220,
-                    SCREEN_HEIGHT/2-220,
-                    0,
-                    loadSurface("./Images/TopPlayers.png"));
+    EGR = createELEMENT(
+        305,
+        272,
+        0,
+        NULL);
 
-  return 0;
+    EGRank = createELEMENT(
+        372,
+        238,
+        0,
+        NULL);
+
+    CredElement = createELEMENT(
+        SCREEN_WIDTH / 2 - 150,
+        SCREEN_HEIGHT / 2 - 100,
+        0,
+        loadSurface(credits));
+
+    RankElement = createELEMENT(
+        SCREEN_WIDTH / 2 - 220,
+        SCREEN_HEIGHT / 2 - 220,
+        0,
+        loadSurface(topPlayers));
+
+    return 0;
 }
 
 void PreparePlay(){
@@ -1622,18 +1623,18 @@ int PlayWin(){
 
 int PlayEnd(){
     int i, j, stop = false;
-    for(i=16, j=0; j<BALLX; j++){
-        if(ballgrid[i][j].color){
+    for (i = 16, j = 0; j < BALLX; j++) {
+        if (ballgrid[i][j].color) {
             stop = true;
             break;
         }
     }
     if (!stop) return 0;
-    for (i=1; i<BALLY-1; i++){
-        for(j=1; j<GRIDX; j++){
+    for (i = 1; i < BALLY - 1; i++) {
+        for (j = 1; j < GRIDX; j++) {
             ballgrid[i][j].color = 0;
         }
-        SDL_Delay(DELAY*5);
+        SDL_Delay(DELAY * 5);
         RefreshScreen();
     }
     ball.image = NULL;
@@ -1647,9 +1648,9 @@ int PlayEnd(){
 
 void printGrid(){
     int i, j;
-    for(i=0; i<BALLY; i++){
-        for(j=0; j<BALLX; j++){
-            if(i%2==0) printf("%d ", ballgrid[i][j].color);
+    for (i = 0; i < BALLY; i++) {
+        for (j = 0; j < BALLX; j++) {
+            if (i % 2 == 0) printf("%d ", ballgrid[i][j].color);
             else printf(" %d", ballgrid[i][j].color);
         }
         printf("\n");
@@ -1661,34 +1662,34 @@ void gridDown()
 {
     int i, j, ballcolor;
 
-    for (i = BALLY-1; i > 0; i--)
-	{
-		for (j=1; j < GRIDX; j++)
-		{
-            if (ballgrid[i][j].color){
+    for (i = BALLY - 1; i > 0; i--)
+    {
+        for (j = 1; j < GRIDX; j++)
+        {
+            if (ballgrid[i][j].color) {
                 /*SDL_FreeSurface(ballgrid[i][j].image);*/
-    			ballgrid[i+1][j] = createNPC(
-    				(i+1)*(IMAGE_HEIGHT - 5),
-    				j*IMAGE_WIDTH + ((i+1)%2 * IMAGE_WIDTH/2) - IMAGE_WIDTH/4,
-    				i+1,
-    				j,
+                ballgrid[i + 1][j] = createNPC(
+                    (i + 1) * (IMAGE_HEIGHT - 5),
+                    j * IMAGE_WIDTH + ((i + 1) % 2 * IMAGE_WIDTH / 2) - IMAGE_WIDTH / 4,
+                    i + 1,
+                    j,
                     ballgrid[i][j].color,
-    				GetColor(ballgrid[i][j].color)
+                    GetColor(ballgrid[i][j].color)
                 );
                 ballgrid[i][j].color = 0;
                 /* printf("Ball Created\n"); */
-    			drawNPC(ballgrid[i+1][j]);
+                drawNPC(ballgrid[i + 1][j]);
             }
-		}
-	}
+        }
+    }
     /* ### */
-    for (j=1; j <= GRIDX; j++)
+    for (j = 1; j <= GRIDX; j++)
     {
         ballcolor = rand() % COLORS + 1;
         BallSurface = GetColor(ballcolor);
         ballgrid[1][j] = createNPC(
-            1*(IMAGE_HEIGHT - 5),
-            j*IMAGE_WIDTH + (1%2 * IMAGE_WIDTH/2) - IMAGE_WIDTH/4,
+            1 * (IMAGE_HEIGHT - 5),
+            j * IMAGE_WIDTH + (1 % 2 * IMAGE_WIDTH / 2) - IMAGE_WIDTH / 4,
             1,
             j,
             ballcolor,
@@ -1697,8 +1698,8 @@ void gridDown()
         drawNPC(ballgrid[1][j]);
     }
     ballgrid[1][GRIDX].color = 0;
-    for(j = 1; j<GRIDX; j++){
-        if (ballgrid[1][j].color){
+    for (j = 1; j < GRIDX; j++) {
+        if (ballgrid[1][j].color) {
             checkIsland(&ballgrid[1][j]);
         }
 
@@ -1722,38 +1723,38 @@ void checkIsland(NPC* npc)
            4 3
     */
 
-	if (npc->indexX < 0 && npc->indexX > BALLX) return;
+    if (npc->indexX < 0 && npc->indexX > BALLX) return;
 
-    for(n = 0; n <= 1; n++){
-        if((npc->indexY)%2 == n){
+    for (n = 0; n <= 1; n++) {
+        if ((npc->indexY) % 2 == n) {
             /*case 3*/
-            if(ballgrid[(npc->indexY)+1][(npc->indexX)+n].color && ballgrid[(npc->indexY)+1][(npc->indexX)+n].remain == 0){
-                checkIsland (&ballgrid[(npc->indexY)+1][(npc->indexX)+n]);
+            if (ballgrid[(npc->indexY) + 1][(npc->indexX) + n].color && ballgrid[(npc->indexY) + 1][(npc->indexX) + n].remain == 0) {
+                checkIsland(&ballgrid[(npc->indexY) + 1][(npc->indexX) + n]);
             }
             /*case 1*/
-            if(ballgrid[(npc->indexY)-1][(npc->indexX)+n].color && ballgrid[(npc->indexY)-1][(npc->indexX)+n].remain == 0){
-                checkIsland (&ballgrid[(npc->indexY)-1][(npc->indexX)+n]);
+            if (ballgrid[(npc->indexY) - 1][(npc->indexX) + n].color && ballgrid[(npc->indexY) - 1][(npc->indexX) + n].remain == 0) {
+                checkIsland(&ballgrid[(npc->indexY) - 1][(npc->indexX) + n]);
             }
             /*case 6*/
-            if(ballgrid[(npc->indexY)-1][(npc->indexX)+n-1].color && ballgrid[(npc->indexY)-1][(npc->indexX)+n-1].remain == 0){
-                checkIsland (&ballgrid[(npc->indexY)-1][(npc->indexX)+n-1]);
+            if (ballgrid[(npc->indexY) - 1][(npc->indexX) + n - 1].color && ballgrid[(npc->indexY) - 1][(npc->indexX) + n - 1].remain == 0) {
+                checkIsland(&ballgrid[(npc->indexY) - 1][(npc->indexX) + n - 1]);
             }
             /*case 4*/
-            if(ballgrid[(npc->indexY)+1][(npc->indexX)+n-1].color && ballgrid[(npc->indexY)+1][(npc->indexX)+n-1].remain == 0){
-                checkIsland (&ballgrid[(npc->indexY)+1][(npc->indexX)+n-1]);
+            if (ballgrid[(npc->indexY) + 1][(npc->indexX) + n - 1].color && ballgrid[(npc->indexY) + 1][(npc->indexX) + n - 1].remain == 0) {
+                checkIsland(&ballgrid[(npc->indexY) + 1][(npc->indexX) + n - 1]);
             }
         }
     }
     /*case 2*/
-    if(ballgrid[(npc->indexY)][(npc->indexX)-1].color && ballgrid[(npc->indexY)][(npc->indexX)-1].remain == 0){
-        checkIsland (&ballgrid[(npc->indexY)][(npc->indexX)-1]);
+    if (ballgrid[(npc->indexY)][(npc->indexX) - 1].color && ballgrid[(npc->indexY)][(npc->indexX) - 1].remain == 0) {
+        checkIsland(&ballgrid[(npc->indexY)][(npc->indexX) - 1]);
     }
     /*case 5*/
-    if(ballgrid[(npc->indexY)][(npc->indexX)+1].color && ballgrid[(npc->indexY)][(npc->indexX)+1].remain == 0){
-        checkIsland (&ballgrid[(npc->indexY)][(npc->indexX)+1]);
+    if (ballgrid[(npc->indexY)][(npc->indexX) + 1].color && ballgrid[(npc->indexY)][(npc->indexX) + 1].remain == 0) {
+        checkIsland(&ballgrid[(npc->indexY)][(npc->indexX) + 1]);
     }
 
-	return ;
+    return;
 }
 
 
@@ -1761,7 +1762,7 @@ void checkAround(NPC* npc, int checkcolor)
 {
     int n;
 
-    SDL_Delay(5*DELAY);
+    SDL_Delay(5 * DELAY);
     RefreshScreen();
 
     /*
@@ -1771,64 +1772,64 @@ void checkAround(NPC* npc, int checkcolor)
            4 3
     */
 
-	if (npc->indexX < 0 && npc->indexX > BALLX){
-    return;
-  }
+    if (npc->indexX < 0 && npc->indexX > BALLX) {
+        return;
+    }
 
-    for(n = 0; n <= 1; n++){
-        if((npc->indexY)%2 == n){
+    for (n = 0; n <= 1; n++) {
+        if ((npc->indexY) % 2 == n) {
             /*case 3*/
-            if(ballgrid[(npc->indexY)+1][(npc->indexX)+n].color == checkcolor){
+            if (ballgrid[(npc->indexY) + 1][(npc->indexX) + n].color == checkcolor) {
                 npc->color = 0;
                 Score += 20;
-                ballgrid[(npc->indexY)+1][(npc->indexX)+n].color = 0;
+                ballgrid[(npc->indexY) + 1][(npc->indexX) + n].color = 0;
                 /*SDL_FreeSurface(ballgrid[(npc->indexY)+1][(npc->indexX)+n].image);*/
-                checkAround (&ballgrid[(npc->indexY)+1][(npc->indexX)+n], checkcolor);
+                checkAround(&ballgrid[(npc->indexY) + 1][(npc->indexX) + n], checkcolor);
             }
             /*case 1*/
-            if(ballgrid[(npc->indexY)-1][(npc->indexX)+n].color == checkcolor){
+            if (ballgrid[(npc->indexY) - 1][(npc->indexX) + n].color == checkcolor) {
                 npc->color = 0;
                 Score += 20;
-                ballgrid[(npc->indexY)-1][(npc->indexX)+n].color = 0;
+                ballgrid[(npc->indexY) - 1][(npc->indexX) + n].color = 0;
                 /*SDL_FreeSurface(ballgrid[(npc->indexY)-1][(npc->indexX)+n].image);*/
-                checkAround (&ballgrid[(npc->indexY)-1][(npc->indexX)+n], checkcolor);
+                checkAround(&ballgrid[(npc->indexY) - 1][(npc->indexX) + n], checkcolor);
             }
             /*case 6*/
-            if(ballgrid[(npc->indexY)-1][(npc->indexX)+n-1].color == checkcolor){
+            if (ballgrid[(npc->indexY) - 1][(npc->indexX) + n - 1].color == checkcolor) {
                 npc->color = 0;
                 Score += 20;
-                ballgrid[(npc->indexY)-1][(npc->indexX)+n-1].color = 0;
+                ballgrid[(npc->indexY) - 1][(npc->indexX) + n - 1].color = 0;
                 /*SDL_FreeSurface(ballgrid[(npc->indexY)-1][(npc->indexX)+n-1].image);*/
-                checkAround (&ballgrid[(npc->indexY)-1][(npc->indexX)+n-1], checkcolor);
+                checkAround(&ballgrid[(npc->indexY) - 1][(npc->indexX) + n - 1], checkcolor);
             }
             /*case 4*/
-            if(ballgrid[(npc->indexY)+1][(npc->indexX)+n-1].color == checkcolor){
+            if (ballgrid[(npc->indexY) + 1][(npc->indexX) + n - 1].color == checkcolor) {
                 npc->color = 0;
                 Score += 20;
-                ballgrid[(npc->indexY)+1][(npc->indexX)+n-1].color = 0;
+                ballgrid[(npc->indexY) + 1][(npc->indexX) + n - 1].color = 0;
                 /*SDL_FreeSurface(ballgrid[(npc->indexY)+1][(npc->indexX)+n-1].image);*/
-                checkAround (&ballgrid[(npc->indexY)+1][(npc->indexX)+n-1], checkcolor);
+                checkAround(&ballgrid[(npc->indexY) + 1][(npc->indexX) + n - 1], checkcolor);
             }
         }
     }
     /*case 2*/
-    if(ballgrid[(npc->indexY)][(npc->indexX)-1].color == checkcolor){
+    if (ballgrid[(npc->indexY)][(npc->indexX) - 1].color == checkcolor) {
         npc->color = 0;
         Score += 20;
-        ballgrid[(npc->indexY)][(npc->indexX)-1].color = 0;
+        ballgrid[(npc->indexY)][(npc->indexX) - 1].color = 0;
         /*SDL_FreeSurface(ballgrid[(npc->indexY)][(npc->indexX)-1].image);*/
-        checkAround (&ballgrid[(npc->indexY)][(npc->indexX)-1], checkcolor);
+        checkAround(&ballgrid[(npc->indexY)][(npc->indexX) - 1], checkcolor);
     }
     /*case 5*/
-    if(ballgrid[(npc->indexY)][(npc->indexX)+1].color == checkcolor){
+    if (ballgrid[(npc->indexY)][(npc->indexX) + 1].color == checkcolor) {
         npc->color = 0;
         Score += 20;
-        ballgrid[(npc->indexY)][(npc->indexX)+1].color = 0;
+        ballgrid[(npc->indexY)][(npc->indexX) + 1].color = 0;
         /*SDL_FreeSurface(ballgrid[(npc->indexY)][(npc->indexX)+1].image);*/
-        checkAround (&ballgrid[(npc->indexY)][(npc->indexX)+1], checkcolor);
+        checkAround(&ballgrid[(npc->indexY)][(npc->indexX) + 1], checkcolor);
     }
 
-	return ;
+    return;
 }
 
 void checkDestruction(NPC* npc, int checkcolor)
@@ -1858,9 +1859,9 @@ void checkDestruction(NPC* npc, int checkcolor)
         /* printf("ballCount = %d\n", ballCount); */
         ballCount = 0;
         Score -= 10;
-        checkAround(destructionStart,destructionStart->color);
-        for(j = 1; j<GRIDX; j++){
-            if (ballgrid[1][j].color){
+        checkAround(destructionStart, destructionStart->color);
+        for (j = 1; j < GRIDX; j++) {
+            if (ballgrid[1][j].color) {
                 checkIsland(&ballgrid[1][j]);
             }
 
@@ -1871,7 +1872,7 @@ void checkDestruction(NPC* npc, int checkcolor)
         currentCount = 0;
         health++;
         /*printf("Destruiu!\n");*/
-        if (PlayWin()){
+        if (PlayWin()) {
             /*printf("\nnão fez mais que a sua obrigação\n");*/
         }
         return;
@@ -1883,59 +1884,59 @@ void checkDestruction(NPC* npc, int checkcolor)
            4 3
     */
 
-	if (npc->indexX < 0 && npc->indexX > BALLX) return;
+    if (npc->indexX < 0 && npc->indexX > BALLX) return;
 
-    for(n = 0; n <= 1; n++){
-        if((npc->indexY)%2 == n){
+    for (n = 0; n <= 1; n++) {
+        if ((npc->indexY) % 2 == n) {
             /*case 3*/
-            if(ballgrid[(npc->indexY)+1][(npc->indexX)+n].color == checkcolor){
+            if (ballgrid[(npc->indexY) + 1][(npc->indexX) + n].color == checkcolor) {
                 ballCount++;
-                checkDestruction (&ballgrid[(npc->indexY)+1][(npc->indexX)+n], checkcolor);
+                checkDestruction(&ballgrid[(npc->indexY) + 1][(npc->indexX) + n], checkcolor);
             }
             /*case 1*/
-            if(ballgrid[(npc->indexY)-1][(npc->indexX)+n].color == checkcolor){
+            if (ballgrid[(npc->indexY) - 1][(npc->indexX) + n].color == checkcolor) {
                 ballCount++;
-                checkDestruction (&ballgrid[(npc->indexY)-1][(npc->indexX)+n], checkcolor);
+                checkDestruction(&ballgrid[(npc->indexY) - 1][(npc->indexX) + n], checkcolor);
             }
             /*case 6*/
-            if(ballgrid[(npc->indexY)-1][(npc->indexX)+n-1].color == checkcolor){
+            if (ballgrid[(npc->indexY) - 1][(npc->indexX) + n - 1].color == checkcolor) {
                 ballCount++;
-                checkDestruction (&ballgrid[(npc->indexY)-1][(npc->indexX)+n-1], checkcolor);
+                checkDestruction(&ballgrid[(npc->indexY) - 1][(npc->indexX) + n - 1], checkcolor);
             }
             /*case 4*/
-            if(ballgrid[(npc->indexY)+1][(npc->indexX)+n-1].color == checkcolor){
+            if (ballgrid[(npc->indexY) + 1][(npc->indexX) + n - 1].color == checkcolor) {
                 ballCount++;
-                checkDestruction (&ballgrid[(npc->indexY)+1][(npc->indexX)+n-1], checkcolor);
+                checkDestruction(&ballgrid[(npc->indexY) + 1][(npc->indexX) + n - 1], checkcolor);
             }
         }
     }
     /*case 2*/
-    if(ballgrid[(npc->indexY)][(npc->indexX)-1].color == checkcolor){
+    if (ballgrid[(npc->indexY)][(npc->indexX) - 1].color == checkcolor) {
         ballCount++;
-        checkDestruction (&ballgrid[(npc->indexY)][(npc->indexX)-1], checkcolor);
+        checkDestruction(&ballgrid[(npc->indexY)][(npc->indexX) - 1], checkcolor);
     }
     /*case 5*/
-    if(ballgrid[(npc->indexY)][(npc->indexX)+1].color == checkcolor){
+    if (ballgrid[(npc->indexY)][(npc->indexX) + 1].color == checkcolor) {
         ballCount++;
-        checkDestruction (&ballgrid[(npc->indexY)][(npc->indexX)+1], checkcolor);
+        checkDestruction(&ballgrid[(npc->indexY)][(npc->indexX) + 1], checkcolor);
     }
 
 
-	return ;
+    return;
 }
 
-void DestroyIsland(int ScoreOn){
+void DestroyIsland(int ScoreOn) {
     int i, j;
-    for (i=1; i<BALLY-1; i++)
-        for(j=1; j<GRIDX; j++){
-            if (ballgrid[i][j].remain){
+    for (i = 1; i < BALLY - 1; i++)
+        for (j = 1; j < GRIDX; j++) {
+            if (ballgrid[i][j].remain) {
                 ballgrid[i][j].remain = 0;
             }
-            else{
-                if (ballgrid[i][j].color){
-                    SDL_Delay(5*DELAY);
+            else {
+                if (ballgrid[i][j].color) {
+                    SDL_Delay(5 * DELAY);
                     RefreshScreen();
-                    if(ScoreOn) Score += 100;
+                    if (ScoreOn) Score += 100;
                 }
                 ballgrid[i][j].indexX = 0;
                 ballgrid[i][j].indexY = 0;
@@ -1950,56 +1951,56 @@ void DestroyIsland(int ScoreOn){
     /*printGrid();*/
 }
 
-void GetThreatLevel(){
+void GetThreatLevel() {
     int i, j, stop = false;
-    for (i=BALLY-1; (i>0 && stop == false); i--)
-        for(j=1; j<GRIDX; j++){
-                if(ballgrid[i][j].color && i == 13){ ThreatLevel = 3; stop = true; break; }
-                else if(ballgrid[i][j].color && i == 10){ ThreatLevel = 2; stop = true; break; }
-                else if(ballgrid[i][j].color && i < 10){ ThreatLevel = 1; stop = true; break; }
-            }
-    switch(ThreatLevel){
-        case 1:
-            PMUI.image = loadSurface( "./Images/uiBlue.png");
-            EGelement.image = loadSurface( "./Images/menuBlue.png");
-            if(Sound) SoundElement.image = loadSurface("./Images/soundOnBlue.png");
-            else SoundElement.image = loadSurface("./Images/soundOffBlue.png");
+    for (i = BALLY - 1; (i > 0 && stop == false); i--)
+        for (j = 1; j < GRIDX; j++) {
+            if (ballgrid[i][j].color && i == 13) { ThreatLevel = 3; stop = true; break; }
+            else if (ballgrid[i][j].color && i == 10) { ThreatLevel = 2; stop = true; break; }
+            else if (ballgrid[i][j].color && i < 10) { ThreatLevel = 1; stop = true; break; }
+        }
+    switch (ThreatLevel) {
+    case 1:
+        PMUI.image = loadSurface(uiBlue);
+        EGelement.image = loadSurface(menuBlue);
+        if (Sound) SoundElement.image = loadSurface(soundOnBlue);
+        else SoundElement.image = loadSurface(soundOffBlue);
 
         break;
-        case 2:
-            PMUI.image = loadSurface( "./Images/uiYellow.png");
-            EGelement.image = loadSurface( "./Images/menuYellow.png");
-            if(Sound) SoundElement.image = loadSurface("./Images/soundOnYellow.png");
-            else SoundElement.image = loadSurface("./Images/soundOffYellow.png");
+    case 2:
+        PMUI.image = loadSurface(uiYellow);
+        EGelement.image = loadSurface(menuYellow);
+        if (Sound) SoundElement.image = loadSurface(soundOnYellow);
+        else SoundElement.image = loadSurface(soundOffYellow);
         break;
-        case 3:
-            PMUI.image = loadSurface( "./Images/uiRed.png");
-            EGelement.image = loadSurface( "./Images/menuRed.png");
-            if(Sound) SoundElement.image = loadSurface("./Images/soundOnRed.png");
-            else SoundElement.image = loadSurface("./Images/soundOffRed.png");
+    case 3:
+        PMUI.image = loadSurface(uiRed);
+        EGelement.image = loadSurface(menuRed);
+        if (Sound) SoundElement.image = loadSurface(soundOnRed);
+        else SoundElement.image = loadSurface(soundOffRed);
         break;
     }
 }
 
-void GetLifeSurface(){
+void GetLifeSurface() {
     int i;
-    switch(ThreatLevel){
-        case 1:
-            for(i=0; i<health; i++)
-                lifeballs[i].image = loadSurface( "./Images/LifeBlue.png" );
+    switch (ThreatLevel) {
+    case 1:
+        for (i = 0; i < health; i++)
+            lifeballs[i].image = loadSurface(lifeBlue);
         break;
-        case 2:
-            for(i=0; i<health; i++)
-                lifeballs[i].image = loadSurface( "./Images/LifeYellow.png" );
+    case 2:
+        for (i = 0; i < health; i++)
+            lifeballs[i].image = loadSurface(lifeYellow);
         break;
-        case 3:
-            for(i=0; i<health; i++)
-                lifeballs[i].image = loadSurface( "./Images/LifeRed.png" );
+    case 3:
+        for (i = 0; i < health; i++)
+            lifeballs[i].image = loadSurface(lifeRed);
         break;
     }
 }
 
-void GetScore(){
+void GetScore() {
     /*The TTF_Font*/
     TTF_Font* font = NULL;
     TTF_Font* bigfont = NULL;
@@ -2018,81 +2019,78 @@ void GetScore(){
 
     /* Load TTF font */
     font = TTF_OpenFont(TTF_PATH, 10);
-    if(font == NULL)
+    if (font == NULL)
         exit(748);
 
-    switch(ThreatLevel){
-        case 1: ttfColor.r = 145;
-                ttfColor.g = 223;
-                ttfColor.b = 224;
+    switch (ThreatLevel) {
+    case 1: ttfColor.r = 145;
+        ttfColor.g = 223;
+        ttfColor.b = 224;
         break;
-        case 2:
-                ttfColor.r = 213;
-                ttfColor.g = 216;
-                ttfColor.b = 118;
+    case 2:
+        ttfColor.r = 213;
+        ttfColor.g = 216;
+        ttfColor.b = 118;
         break;
-        case 3:
-                ttfColor.r = 224;
-                ttfColor.g = 68;
-                ttfColor.b = 68;
+    case 3:
+        ttfColor.r = 224;
+        ttfColor.g = 68;
+        ttfColor.b = 68;
         break;
     }
 
-	Message_Rect.x = SCREEN_WIDTH/2 + 69;
-	Message_Rect.y = SCREEN_HEIGHT-20;
-	Message_Rect.w = 100;
-	Message_Rect.h = 38;
+    Message_Rect.x = SCREEN_WIDTH / 2 + 69;
+    Message_Rect.y = SCREEN_HEIGHT - 20;
+    Message_Rect.w = 100;
+    Message_Rect.h = 38;
 
     sprintf(scoreString, "%012d", Score);
     /*printf("String Score = %s\n", scoreString);*/
-    surfaceMessage = TTF_RenderText_Solid(font,scoreString, ttfColor);
-    if(!surfaceMessage){
+    surfaceMessage = TTF_RenderText_Solid(font, scoreString, ttfColor);
+    if (!surfaceMessage) {
         printf("Failed to render Text!\n");
         /*exit(734);*/
     }
 
-    SDL_BlitSurface( surfaceMessage, NULL, gScreenSurface, &Message_Rect );
+    SDL_BlitSurface(surfaceMessage, NULL, gScreenSurface, &Message_Rect);
     SDL_FreeSurface(surfaceMessage);
 
-    if (play == -1){
+    if (play == -1) {
         bigfont = TTF_OpenFont(TTF_PATH, 20);
-        Message_Rect.x = SCREEN_WIDTH/2 - 115;
-        Message_Rect.y = SCREEN_HEIGHT/2 + 90;
+        Message_Rect.x = SCREEN_WIDTH / 2 - 115;
+        Message_Rect.y = SCREEN_HEIGHT / 2 + 90;
         Message_Rect.w = 200;
         Message_Rect.h = 76;
         sprintf(scoreString, "Score: %08d", Score);
-        bigSurface = TTF_RenderText_Solid(bigfont,scoreString, ttfColor);
+        bigSurface = TTF_RenderText_Solid(bigfont, scoreString, ttfColor);
         SDL_BlitSurface(bigSurface, NULL, gScreenSurface, &Message_Rect);
-        TTF_CloseFont( bigfont );
+        TTF_CloseFont(bigfont);
     }
 
-    TTF_CloseFont( font );
+    TTF_CloseFont(font);
     /*surfaceMessage = NULL;*/
 }
 
-void EndGameUI(){
+void EndGameUI() {
     int Mx, My;
-    switch(ThreatLevel){
-        case 1:
-            EGUI.image = loadSurface("./Images/victory.png");
-            EGR.image = loadSurface("./Images/returnBlue.png");
-            EGMen.image = loadSurface("./Images/menuBlue.png");
-            EGRank.image = loadSurface("./Images/rankBlue.png");
+    switch (ThreatLevel) {
+    case 1:
+        EGUI.image = loadSurface(victory);
+        EGR.image = loadSurface(returnBlue);
+        EGMen.image = loadSurface(menuBlue);
+        EGRank.image = loadSurface(rankBlue);
         break;
-        case 3:
-            EGUI.image = loadSurface("./Images/defeat.png");
-            EGR.image = loadSurface("./Images/returnRed.png");
-            EGMen.image = loadSurface("./Images/menuRed.png");
-            EGRank.image = loadSurface("./Images/rankRed.png");
+    case 3:
+        EGUI.image = loadSurface(defeat);
+        EGR.image = loadSurface(returnRed);
+        EGMen.image = loadSurface(menuRed);
+        EGRank.image = loadSurface(rankRed);
         break;
     }
-    SDL_GetMouseState( &Mx, &My );
-
-
-
+    SDL_GetMouseState(&Mx, &My);
 }
 
-void GetInput(SDL_Event e){
+void GetInput(SDL_Event e) {
     /*The TTF_Font*/
     TTF_Font* font = NULL;
 
@@ -2109,78 +2107,54 @@ void GetInput(SDL_Event e){
 
     /* Load TTF font */
     font = TTF_OpenFont(TTF_PATH, 20);
-    if(font == NULL)
+    if (font == NULL)
         exit(748);
 
-    switch(ThreatLevel){
-        case 1: ttfColor.r = 145;
-                ttfColor.g = 223;
-                ttfColor.b = 224;
+    switch (ThreatLevel) {
+    case 1: ttfColor.r = 145;
+        ttfColor.g = 223;
+        ttfColor.b = 224;
         break;
-        case 2:
-                ttfColor.r = 213;
-                ttfColor.g = 216;
-                ttfColor.b = 118;
+    case 2:
+        ttfColor.r = 213;
+        ttfColor.g = 216;
+        ttfColor.b = 118;
         break;
-        case 3:
-                ttfColor.r = 224;
-                ttfColor.g = 68;
-                ttfColor.b = 68;
+    case 3:
+        ttfColor.r = 224;
+        ttfColor.g = 68;
+        ttfColor.b = 68;
         break;
     }
 
-	Message_Rect.x = SCREEN_WIDTH/2;
-	Message_Rect.y = SCREEN_HEIGHT/2;
-	Message_Rect.w = 100;
-	Message_Rect.h = 76;
+    Message_Rect.x = SCREEN_WIDTH / 2;
+    Message_Rect.y = SCREEN_HEIGHT / 2;
+    Message_Rect.w = 100;
+    Message_Rect.h = 76;
 
-            switch(e.type){
-                case SDL_TEXTINPUT:
-                    if(strlen(NickString)<16){
-                        strcat(NickString, e.text.text);
-                    }
-                break;
-                case SDL_KEYDOWN:
-                    switch(e.key.keysym.sym){
-                        case SDLK_BACKSPACE:
-                            NickString[strlen(NickString)-1] = '\0';
-                        break;
-                        case SDLK_RETURN:
-                            getstring = false;
-                        break;
-                    }
-                break;
-            }
-
-
-        /*NickString[i+1] = '\0';*/
-        NickSurface = TTF_RenderText_Solid(font, NickString, ttfColor);
-        SDL_BlitSurface( NickSurface, NULL, gScreenSurface, &Message_Rect );
-        SDL_FreeSurface(NickSurface);
-
-        TTF_CloseFont( font );
-}
-
-void DrawStar(){
-    SDL_Surface* StarSurface = NULL;
-    SDL_Rect Star_Rect;
-
-    static int spriteimg = 0;
-
-    if(spriteimg == 0){
-        Star_Rect.x = SCREEN_WIDTH/2;
-        Star_Rect.y = SCREEN_HEIGHT/2;
-        Star_Rect.w = 4;
-        Star_Rect.h = 4;
+    switch (e.type) {
+    case SDL_TEXTINPUT:
+        if (strlen(NickString) < 16) {
+            strcat(NickString, e.text.text);
+        }
+        break;
+    case SDL_KEYDOWN:
+        switch (e.key.keysym.sym) {
+        case SDLK_BACKSPACE:
+            NickString[strlen(NickString) - 1] = '\0';
+            break;
+        case SDLK_RETURN:
+            getstring = false;
+            break;
+        }
+        break;
     }
 
-        if (spriteimg<50) StarSurface = loadSurface("./Images/star1_0.png");
-        if (spriteimg < 100 && spriteimg >= 0) StarSurface = loadSurface("./Images/star1_1.png");
-        if (spriteimg < 150 && spriteimg >= 100) StarSurface = loadSurface("./Images/star1_2.png");
 
-    SDL_BlitSurface( StarSurface, NULL, gScreenSurface, &Star_Rect );
-    SDL_FreeSurface(StarSurface);
+    /*NickString[i+1] = '\0';*/
+    NickSurface = TTF_RenderText_Solid(font, NickString, ttfColor);
+    SDL_BlitSurface(NickSurface, NULL, gScreenSurface, &Message_Rect);
+    SDL_FreeSurface(NickSurface);
 
-    spriteimg++;
-    if (spriteimg > 150) spriteimg = 0;
+    TTF_CloseFont(font);
 }
