@@ -13,7 +13,7 @@
  *
  */
 
-/*Using SDL, SDL_image, standard IO, and strings*/
+ /*Using SDL, SDL_image, standard IO, and strings*/
 #define _CRT_SECURE_NO_WARNINGS
 #include <SDL.h>
 #include <SDL_image.h>
@@ -40,7 +40,7 @@
  * Constants
  */
 
-/*Screen dimension constants*/
+ /*Screen dimension constants*/
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
 
@@ -72,10 +72,12 @@ const int true = 1;
 const int IMAGE_WIDTH = 32;
 const int IMAGE_HEIGHT = 32;
 
+int a = 1;
+
 
 typedef struct _BACKGROUND
 {
-  SDL_Surface* image;
+    SDL_Surface* image;
 } BACKGROUND;
 
 typedef struct _PLAYER
@@ -113,10 +115,10 @@ typedef struct _NPC
 
 typedef struct _UIELEMENT
 {
-  float posX;
-  float posY;
-  int color;
-  SDL_Surface* image;
+    float posX;
+    float posY;
+    int color;
+    SDL_Surface* image;
 } UIELEMENT;
 
 /*
@@ -136,10 +138,10 @@ char NickString[16];
 SDL_Window* gWindow = NULL;
 
 /* Our wave file */
-Mix_Chunk *wave = NULL;
+Mix_Chunk* wave = NULL;
 
 /* Our music file */
-Mix_Music *music = NULL;
+Mix_Music* music = NULL;
 
 /*The image character*/
 PLAYER ball;
@@ -207,7 +209,7 @@ NPC* destructionStart = NULL;
  * function prototypes
  */
 
-/*Starts up SDL and creates window*/
+ /*Starts up SDL and creates window*/
 int init();
 
 /*Loads media*/
@@ -219,16 +221,16 @@ int getstring = 1;
 void closing();
 
 /*Loads individual image*/
-SDL_Surface* loadSurface( char *path );
+SDL_Surface* loadSurface(char* path);
 
 /*Create PLAYER*/
-PLAYER createPLAYER( float posX, float posY, float stepX, float stepY, int color, SDL_Surface *image);
+PLAYER createPLAYER(float posX, float posY, float stepX, float stepY, int color, SDL_Surface* image);
 
 /*Create NPC*/
-NPC createNPC(float posY, float posX, int indexY, int indexX, int color, SDL_Surface *image);
+NPC createNPC(float posY, float posX, int indexY, int indexX, int color, SDL_Surface* image);
 
 /*Create UI element*/
-UIELEMENT createELEMENT(float posX, float posY, int color, SDL_Surface *image);
+UIELEMENT createELEMENT(float posX, float posY, int color, SDL_Surface* image);
 
 /*Move PLAYER*/
 void movePLAYER();
@@ -342,22 +344,22 @@ void Buttons(SDL_Event e);
 void shoot();
 
 
-int main( int argc, char* args[] )
+int main(int argc, char* args[])
 {
     int errortest;
 
     /*Prepares game initialization and variables*/
     errortest = PrepareGame();
 
-    if(errortest)
+    if (errortest)
     {
-      return errortest;
+        return errortest;
     }
 
-    Mix_PlayMusic( music, -1);
+    Mix_PlayMusic(music, -1);
 
     /*While application is running*/
-    while( !quit )
+    while (!quit)
     {
         Game();
     }
@@ -371,8 +373,8 @@ void movePLAYER()
 {
     ball.posX += ball.stepX;
     ball.posY += ball.stepY;
-    ball.centerX = ball.posX + IMAGE_WIDTH/2;
-    ball.centerY = ball.posY + IMAGE_HEIGHT/2;
+    ball.centerX = ball.posX + IMAGE_WIDTH / 2;
+    ball.centerY = ball.posY + IMAGE_HEIGHT / 2;
 
     /*Checks if there's any wall collision for it inside the function*/
     WallCollision();
@@ -382,7 +384,7 @@ void movePLAYER()
 NPC* collision()
 {
     /*char scoreString[16];*/
-    NPC *n;
+    NPC* n;
 
     /*Checks if there's any NPC collision for it inside the function*/
     n = NPCCollision();
@@ -390,10 +392,10 @@ NPC* collision()
     /*Checks if there's any ceiling collision for it inside the function*/
     if (n == NULL)
         n = CeilingCollision();
-    if (n != NULL){
+    else {
         /*printGrid();*/
-        ball.posX = (SCREEN_WIDTH/2 - IMAGE_WIDTH/2);
-        ball.posY = (SCREEN_HEIGHT - IMAGE_HEIGHT) - 4;
+        ball.posX = (SCREEN_WIDTH / 2 - IMAGE_WIDTH / 2) + 1;
+        ball.posY = (SCREEN_HEIGHT - IMAGE_HEIGHT) - 5;
         ball.stepY = 0;
         ball.stepX = 0;
         clicked = 0;
@@ -402,7 +404,7 @@ NPC* collision()
         GetThreatLevel();
         GetLifeSurface();
 
-        if (PlayWin()){
+        if (PlayWin()) {
             /*printf("\nnão fez mais que a sua obrigação\n");*/
         }
 
@@ -413,49 +415,49 @@ NPC* collision()
 
 void WallCollision()
 {
-    if ( (ball.posX + IMAGE_WIDTH > SCREEN_WIDTH - BORDER) ||
-         (ball.posX < BORDER) )
+    if ((ball.posX + IMAGE_WIDTH > SCREEN_WIDTH - BORDER) ||
+        (ball.posX < BORDER))
     {
-        ball.stepX =- ball.stepX;
+        ball.stepX = -ball.stepX;
         ball.posX += ball.stepX;
     }
 }
 
 NPC* CeilingCollision()
 {
-  int ballcolor;
-  int newX;
+    int ballcolor;
+    int newX;
 
-  if (ball.posY < BORDER + 5)
-  {
-      newX = (int)((ball.posX) / IMAGE_WIDTH);
-      if (ball.posX > newX*IMAGE_WIDTH + IMAGE_WIDTH/2) newX++;
+    if (ball.posY < BORDER + 5)
+    {
+        newX = (int)((ball.posX) / IMAGE_WIDTH);
+        if (ball.posX > newX * IMAGE_WIDTH + IMAGE_WIDTH / 2) newX++;
 
-      ballgrid[1][newX] = createNPC(
-          IMAGE_HEIGHT-5,
-          newX*IMAGE_WIDTH + IMAGE_WIDTH/4,
-          1,
-          newX,
-          ball.color,
-          ball.image
-      );
+        ballgrid[1][newX] = createNPC(
+            IMAGE_HEIGHT - 5,
+            newX * IMAGE_WIDTH + IMAGE_WIDTH / 4,
+            1,
+            newX,
+            ball.color,
+            ball.image
+        );
 
-      ball.image = NULL;
+        ball.image = NULL;
 
-      ballCount = 0;
-      currentCount = 0;
-      checkDestruction(&ballgrid[1][newX], ballgrid[1][newX].color);
-      drawNPC(ballgrid[1][newX]);
+        ballCount = 0;
+        currentCount = 0;
+        checkDestruction(&ballgrid[1][newX], ballgrid[1][newX].color);
+        drawNPC(ballgrid[1][newX]);
 
-      ball.color = nextball.color;
-      ball.image = nextball.image;
-      ballcolor = rand() % COLORS + 1;
-      nextball.color = ballcolor;
-      nextball.image = GetColor(ballcolor);
+        ball.color = nextball.color;
+        ball.image = nextball.image;
+        ballcolor = rand() % COLORS + 1;
+        nextball.color = ballcolor;
+        nextball.image = GetColor(ballcolor);
 
-      return &ballgrid[0][newX];
-  }
-  return NULL;
+        return &ballgrid[0][newX];
+    }
+    return NULL;
 }
 
 NPC* checkCollision()
@@ -463,52 +465,52 @@ NPC* checkCollision()
     int i, j;
     float dist, distX, distY;
 
-    for(i = 1; i < BALLY; i++)
-    for (j = 1; j <= BALLX; j++)
-    {
-        if(ballgrid[i][j].color){
+    for (i = 1; i < BALLY; i++)
+        for (j = 1; j <= BALLX; j++)
+        {
+            if (ballgrid[i][j].color) {
 
-            distX = ballgrid[i][j].centerX - (ball.centerX);
-            distY = ballgrid[i][j].centerY - (ball.centerY);
-            dist = sqrt(pow(distX, 2) + pow(distY, 2));
+                distX = ballgrid[i][j].centerX - (ball.centerX);
+                distY = ballgrid[i][j].centerY - (ball.centerY);
+                dist = sqrt(pow(distX, 2) + pow(distY, 2));
 
-            ballgrid[i][j].distX = distX;
-            ballgrid[i][j].distY = distY;
-            ballgrid[i][j].dist = dist;
+                ballgrid[i][j].distX = distX;
+                ballgrid[i][j].distY = distY;
+                ballgrid[i][j].dist = dist;
 
-            if (dist < IMAGE_WIDTH - COLRADIUS)
-            {
-                /*if(ball.color == ballgrid[i][j].color){*/
+                if (dist < IMAGE_WIDTH - COLRADIUS)
+                {
+                    /*if(ball.color == ballgrid[i][j].color){*/
 
-                /* printf("Ball color: %d\nBall Index: %d\n",ballgrid[i][j].color,j); */
+                    /* printf("Ball color: %d\nBall Index: %d\n",ballgrid[i][j].color,j); */
 
-                /* printf("ballgrid centerY = %f\nplayer centerY = %f\n", ballgrid[i][j].centerY, ball.centerY);*/
-                  /*
-                    COLTYPE CODES:
-                         6 1
-                        5 O 2
-                         4 3
-                  */
-                  if (ball.centerX > ballgrid[i][j].centerX)
-                  {
-                    if (ball.centerY < IMAGE_HEIGHT/5 + ballgrid[i][j].posY) ballgrid[i][j].coltype = 1;
-                    else if (ball.centerY > (IMAGE_HEIGHT/3) * 2 + ballgrid[i][j].posY+1) ballgrid[i][j].coltype = 3;
-                    else ballgrid[i][j].coltype = 2;
-                  }
+                    /* printf("ballgrid centerY = %f\nplayer centerY = %f\n", ballgrid[i][j].centerY, ball.centerY);*/
+                      /*
+                        COLTYPE CODES:
+                             6 1
+                            5 O 2
+                             4 3
+                      */
+                    if (ball.centerX > ballgrid[i][j].centerX)
+                    {
+                        if (ball.centerY < IMAGE_HEIGHT / 5 + ballgrid[i][j].posY) ballgrid[i][j].coltype = 1;
+                        else if (ball.centerY > (IMAGE_HEIGHT / 3) * 2 + ballgrid[i][j].posY + 1) ballgrid[i][j].coltype = 3;
+                        else ballgrid[i][j].coltype = 2;
+                    }
 
-                  else
-                  {
-                    if (ball.centerY < IMAGE_HEIGHT/5 + ballgrid[i][j].posY) ballgrid[i][j].coltype = 6;
-                    else if (ball.centerY > (IMAGE_HEIGHT/3) * 2 + ballgrid[i][j].posY+1) ballgrid[i][j].coltype = 4;
-                    else ballgrid[i][j].coltype = 5;
-                  }
+                    else
+                    {
+                        if (ball.centerY < IMAGE_HEIGHT / 5 + ballgrid[i][j].posY) ballgrid[i][j].coltype = 6;
+                        else if (ball.centerY > (IMAGE_HEIGHT / 3) * 2 + ballgrid[i][j].posY + 1) ballgrid[i][j].coltype = 4;
+                        else ballgrid[i][j].coltype = 5;
+                    }
 
-                  /* printf("coltype = %d\n", ballgrid[i][j].coltype); */
-                  /* printf("player center: %f ballij center: %f\n", ball.centerX, ballgrid[i][j].centerX); */
-                  return &ballgrid[i][j];
-              }
-          }
-      }
+                    /* printf("coltype = %d\n", ballgrid[i][j].coltype); */
+                    /* printf("player center: %f ballij center: %f\n", ball.centerX, ballgrid[i][j].centerX); */
+                    return &ballgrid[i][j];
+                }
+            }
+        }
 
     return NULL;
 }
@@ -650,8 +652,8 @@ UIELEMENT createELEMENT(float posX, float posY, int color, SDL_Surface* image)
 
 /*Create PLAYER*/
 PLAYER createPLAYER(float posX, float posY,
-                    float stepX, float stepY,
-                    int color, SDL_Surface *image)
+    float stepX, float stepY,
+    int color, SDL_Surface* image)
 {
     PLAYER p;
 
@@ -668,8 +670,8 @@ PLAYER createPLAYER(float posX, float posY,
 
 /*Create NPC*/
 NPC createNPC(float posY, float posX,
-              int indexY, int indexX,
-              int color, SDL_Surface *image)
+    int indexY, int indexX,
+    int color, SDL_Surface* image)
 {
     NPC n;
 
@@ -691,9 +693,9 @@ NPC createNPC(float posY, float posX,
 /*makes BACKGROUND*/
 void makeBACKGROUND()
 {
-  if (interface == 1) backg.image = loadSurface(menuBG);
-  if (interface == 2) backg.image = loadSurface(gameBG);
-  if (interface == 3 || interface == 4) backg.image = loadSurface(menuBG2);
+    if (interface == 1) backg.image = loadSurface(menuBG);
+    if (interface == 2) backg.image = loadSurface(gameBG);
+    if (interface == 3 || interface == 4) backg.image = loadSurface(menuBG2);
 }
 
 /*
@@ -723,21 +725,27 @@ SDL_Surface* GetColor(int color)
     {
     case 1:
         ColorSurface = loadSurface(color1);
+        //ColorSurface = ballRequest(color1);
         break;
     case 2:
         ColorSurface = loadSurface(color2);
+        //ColorSurface = ballRequest(color2);
         break;
     case 3:
         ColorSurface = loadSurface(color3);
+        //ColorSurface = ballRequest(color3);
         break;
     case 4:
         ColorSurface = loadSurface(color4);
+        //ColorSurface = ballRequest(color4);
         break;
     case 5:
         ColorSurface = loadSurface(color5);
+        //ColorSurface = ballRequest(color5);
         break;
     case 6:
         ColorSurface = loadSurface(color6);
+        //ColorSurface = ballRequest(color6);
         break;
     }
 
@@ -745,11 +753,11 @@ SDL_Surface* GetColor(int color)
 }
 
 /*Clean Grid*/
-void cleanGrid(){
+void cleanGrid() {
     int i, j;
 
-    for (i=1; i<BALLY; i++){
-        for(j=1; j<BALLX; j++){
+    for (i = 1; i < BALLY; i++) {
+        for (j = 1; j < BALLX; j++) {
             ballgrid[i][j].indexX = 0;
             ballgrid[i][j].indexY = 0;
             ballgrid[i][j].posX = 0;
@@ -785,7 +793,7 @@ void drawPLAYER(PLAYER p)
     srcRect.h = IMAGE_HEIGHT;
     dstRect.x = p.posX;
     dstRect.y = p.posY;
-    SDL_BlitSurface( p.image, &srcRect, gScreenSurface, &dstRect );
+    SDL_BlitSurface(p.image, &srcRect, gScreenSurface, &dstRect);
 }
 
 /*Displayes Background on screen*/
@@ -861,6 +869,7 @@ void RefreshScreen()
             drawELEMENT(EGMen, 38, 38);
             drawELEMENT(EGR, 38, 38);
             drawELEMENT(EGRank, 38, 38);
+            GetScore();
         }
 
     }
@@ -880,6 +889,8 @@ void RefreshScreen()
     /*Update the surface*/
     SDL_UpdateWindowSurface(gWindow);
 
+    //SDL_FreeSurface(gScreenSurface);
+
     /* Not so good solution, depends on your computer*/
     SDL_Delay(DELAY);
 }
@@ -890,27 +901,14 @@ void shoot() {
 
     SDL_GetMouseState(&Mx, &My);
 
-    /*Click nao funciona se My dentro de safe zone*/
     if (My > SCREEN_HEIGHT - 45) return;
 
-    /*Reinterpretando Mx e My com origem no centro de ball*/
     Mx = Mx - SCREEN_WIDTH / 2;
     My = SCREEN_HEIGHT - My - IMAGE_HEIGHT / 2;
 
-    /*Reinterpretando x e y para que a hipotenusa seja 1 (calculando o step)*/
     ball.stepX = Mx / sqrt((Mx * Mx) + (My * My));
     ball.stepY = -My / sqrt((Mx * Mx) + (My * My));
 
-    /* CASO NECESSARIO, SABER QUAL STEPX E STEPY
-    printf("step X = %f\nstep Y = %f\n", ball.stepX, ball.stepY);
-    printf("%d, %d\n", Mx, My);
-    */
-
-    /*
-    * CRIANDO UMA EXCEÇÃO PARA ANGULOS EXTREMOS (PROXIMOS DE ACIMA DE 172 E ABAIXO DE 8 GRAUS)
-    * sen 8 = 0.99
-    * cos 8 = -0.139
-    */
 
     if (ball.stepX > 0.997)
     {
@@ -927,29 +925,26 @@ void shoot() {
     ball.stepY *= MSPEED;
     ball.stepX *= MSPEED;
     clicked = 1;
-    /* P/ TESTAR A BOLINHA IR RETO
-      ball.stepX = 0;
-      ball.stepY = -8; */
 }
 
-void Game(){
+void Game() {
 
-    if(!Sound) Mix_VolumeMusic(0);
+    if (!Sound) Mix_VolumeMusic(0);
     else Mix_VolumeMusic(100);
 
-    switch(interface){
-        case 1: /*Main Menu*/
-            MainMenu();
-            break;
-        case 2: /*Play*/
-            Play();
-            break;
-        case 3: /*Highscores*/
-            Highscores();
-            break;
-        case 4: /*Credits*/
-            Credits();
-            break;
+    switch (interface) {
+    case 1: /*Main Menu*/
+        MainMenu();
+        break;
+    case 2: /*Play*/
+        Play();
+        break;
+    case 3: /*Highscores*/
+        Highscores();
+        break;
+    case 4: /*Credits*/
+        Credits();
+        break;
     }
     RefreshScreen();
 }
@@ -974,100 +969,103 @@ void MainMenu() {
     }
 }
 
-void Highscores(){
+void Highscores() {
     SDL_Event e;
 
-    while( SDL_PollEvent(&e) != 0)
+    while (SDL_PollEvent(&e) != 0)
     {
         Buttons(e);
-        switch(e.type){
-            case SDL_QUIT:
-                quit = true;
+        switch (e.type) {
+        case SDL_QUIT:
+            quit = true;
             break;
-            case SDL_KEYDOWN:
-                if(e.key.keysym.sym == SDLK_ESCAPE)
-                    quit = true;
+        case SDL_KEYDOWN:
+            if (e.key.keysym.sym == SDLK_ESCAPE)
+                quit = true;
             break;
         }
     }
 }
 
-void Credits(){
+void Credits() {
     SDL_Event e;
 
-    while( SDL_PollEvent(&e) != 0)
+    while (SDL_PollEvent(&e) != 0)
     {
         Buttons(e);
-        switch(e.type){
-            case SDL_QUIT:
-                quit = true;
+        switch (e.type) {
+        case SDL_QUIT:
+            quit = true;
             break;
-            case SDL_KEYDOWN:
-                if(e.key.keysym.sym == SDLK_ESCAPE)
-                    quit = true;
+        case SDL_KEYDOWN:
+            if (e.key.keysym.sym == SDLK_ESCAPE)
+                quit = true;
             break;
         }
     }
 }
 
-void Buttons(SDL_Event e){
+void Buttons(SDL_Event e) {
     int Mx, My;
     int ballcolor;
 
-    SDL_GetMouseState( &Mx, &My );
+
+
+    SDL_GetMouseState(&Mx, &My);
+
     // interface == 1: Главное меню
-    if(interface == 1){
+    if (interface == 1) {
         /*Sound Element Button*/
         SoundElement.posX = 3;
         SoundElement.posY = (SCREEN_HEIGHT - 41) + 4;
-        if(Mx < (41) && Mx > (3)
-        && My > (SCREEN_HEIGHT- 41) && My < (SCREEN_HEIGHT - 41 + 38)){
-            if(e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_LEFT){
-            if(Sound) Sound = false;
-            else Sound = true;
+        if (Mx < (41) && Mx >(3)
+            && My > (SCREEN_HEIGHT - 41) && My < (SCREEN_HEIGHT - 41 + 38)) {
+            if (e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_LEFT) {
+                if (Sound) Sound = false;
+                else Sound = true;
             }
             if (Sound == true)
                 SoundElement.image = loadSurface(soundOnHoverBlue);
             else if (Sound == false)
                 SoundElement.image = loadSurface(soundOffHoverBlue);
-            }
-        else{
+        }
+        else {
             if (Sound == true)
                 SoundElement.image = loadSurface(soundOnBlue);
             else if (Sound == false)
                 SoundElement.image = loadSurface(soundOffBlue);
-            }
+        }
 
         /*Main Menu Buttons*/
-        if(!(Mx > 110 && Mx < 210 && My > 210 && My < 359)){
+        if (!(Mx > 110 && Mx < 210 && My > 210 && My < 359)) {
             ArrowElement.image = NULL;
         }
-        else if(Mx > 110 && Mx < 210){
+        else if (Mx > 110 && Mx < 210) {
             ArrowElement.image = loadSurface(arrow);
-            if(My > 210 && My < 235){
+            if (My > 210 && My < 235) {
                 ArrowElement.posY = 208;
-                if(e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_LEFT){
-                interface = 2;
-                makeBACKGROUND();
+                if (e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_LEFT) {
+                    interface = 2;
+                    makeBACKGROUND();
                 }
             }
-            if(My > 250 && My < 275){
+            if (My > 250 && My < 275) {
                 ArrowElement.posY = 250;
-                if(e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_LEFT){
+                if (e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_LEFT) {
                     interface = 3;
                     makeBACKGROUND();
                 }
             }
-            if(My > 290 && My < 317){
+            if (My > 290 && My < 317) {
                 ArrowElement.posY = 292;
-                if(e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_LEFT){
+                if (e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_LEFT) {
                     interface = 4;
                     makeBACKGROUND();
                 }
             }
-            if(My > 332 && My < 359){
+            if (My > 332 && My < 359) {
                 ArrowElement.posY = 334;
-                if(e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_LEFT){
+                if (e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_LEFT) {
                     quit = true;
                 }
             }
@@ -1076,105 +1074,109 @@ void Buttons(SDL_Event e){
 
     }
 
-    if((interface == 2 || interface == 3 || interface == 4)){
+    if ((interface == 2 || interface == 3 || interface == 4)) {
+        EGelement.posX = 577;
+        EGelement.posY = (SCREEN_HEIGHT - 41) + 4;
         /*End Game Button*/
-        if((Mx < (SCREEN_WIDTH - 2*IMAGE_WIDTH + 38) && Mx > (SCREEN_WIDTH - 2*IMAGE_WIDTH -2)
-        && My > (SCREEN_HEIGHT- 41) && My < (SCREEN_HEIGHT - 41 + 38))
-        || (( (Mx < 268) && (Mx > 238) && (My < 274) && (My > 238) ) && (play == -1))){
-            if(e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_LEFT){
-              interface = 1;
-              play = 0;
-              ball.posX = (SCREEN_WIDTH/2 - IMAGE_WIDTH/2);
-              ball.posY = (SCREEN_HEIGHT - IMAGE_HEIGHT) - 4;
-              ball.stepX = 0;
-              ball.stepY = 0;
-              ballcolor = rand() % COLORS + 1;
-              ball.color = ballcolor;
-              ball.image = GetColor(ballcolor);
-              ballcolor = rand() % COLORS + 1;
-              nextball.image = GetColor(ballcolor);
-              nextball.color = ballcolor;
-              ArrowElement.image = NULL;
-              ThreatLevel = 1;
+        if ((Mx < (SCREEN_WIDTH - 2 * IMAGE_WIDTH + 38) && Mx >(SCREEN_WIDTH - 2 * IMAGE_WIDTH - 2)
+            && My > (SCREEN_HEIGHT - 41) && My < (SCREEN_HEIGHT - 41 + 38))
+            || (((Mx < 268) && (Mx > 238) && (My < 274) && (My > 238)) && (play == -1))) {
+            if (e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_LEFT) {
+                interface = 1;
+                play = 0;
+                ball.posX = (SCREEN_WIDTH / 2 - IMAGE_WIDTH / 2);
+                ball.posY = (SCREEN_HEIGHT - IMAGE_HEIGHT) - 4;
+                ball.stepX = 0;
+                ball.stepY = 0;
+                ballcolor = rand() % COLORS + 1;
+                ball.color = ballcolor;
+                ball.image = GetColor(ballcolor);
+                ballcolor = rand() % COLORS + 1;
+                nextball.image = GetColor(ballcolor);
+                nextball.color = ballcolor;
+                ArrowElement.image = NULL;
+                ThreatLevel = 1;
 
-              cleanGrid();
-              makeBACKGROUND();
-              EGelement.image = loadSurface(menuBlue);
+                cleanGrid();
+                makeBACKGROUND();
+                EGelement.image = loadSurface(menuBlue);
+
             }
-            if(!(Mx < (268) && Mx > (238) && My < (274) && My > (238) )){
-                switch(ThreatLevel){
-                    case 1: EGelement.image = loadSurface(menuHoverBlue); break;
-                    case 2: EGelement.image = loadSurface(menuHoverYellow); break;
-                    case 3: EGelement.image = loadSurface(menuHoverRed); break;
+
+            if (!(Mx < (268) && Mx >(238) && My < (274) && My >(238))) {
+                switch (ThreatLevel) {
+                case 1: EGelement.image = loadSurface(menuHoverBlue); break;
+                case 2: EGelement.image = loadSurface(menuHoverYellow); break;
+                case 3: EGelement.image = loadSurface(menuHoverRed); break;
                 }
             }
         }
-            else{
-                switch(ThreatLevel){
-                    case 1: EGelement.image = loadSurface(menuBlue); break;
-                    case 2: EGelement.image = loadSurface(menuYellow); break;
-                    case 3: EGelement.image = loadSurface(menuRed); break;
-                }
+        else {
+            switch (ThreatLevel) {
+            case 1: EGelement.image = loadSurface(menuBlue); break;
+            case 2: EGelement.image = loadSurface(menuYellow); break;
+            case 3: EGelement.image = loadSurface(menuRed); break;
             }
+        }
 
         /*Sound Element Button*/
-        SoundElement.posX = 32;
-        SoundElement.posY = (SCREEN_HEIGHT - 41) + 6;
-          if(Mx < (66) && Mx > (28)
-          && My > (SCREEN_HEIGHT- 41) && My < (SCREEN_HEIGHT - 41 + 38)){
-              if(e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_LEFT){
-              if(Sound) Sound = false;
-              else Sound = true;
-              }
-              if (Sound == true){
-                  switch(ThreatLevel){
-                      case 1: SoundElement.image = loadSurface(soundOnHoverBlue); break;
-                      case 2: SoundElement.image = loadSurface(soundOnHoverYellow); break;
-                      case 3: SoundElement.image = loadSurface(soundOnHoverRed); break;
-                  }
-              }
-              else if (Sound == false){
-                  switch(ThreatLevel){
-                      case 1: SoundElement.image = loadSurface(soundOffHoverBlue); break;
-                      case 2: SoundElement.image = loadSurface(soundOffHoverYellow); break;
-                      case 3: SoundElement.image = loadSurface(soundOffHoverRed); break;
-                  }
-              }
-          }
-          else{
-              if (Sound == true){
-                  switch(ThreatLevel){
-                      case 1: SoundElement.image = loadSurface(soundOnBlue); break;
-                      case 2: SoundElement.image = loadSurface(soundOnYellow); break;
-                      case 3: SoundElement.image = loadSurface(soundOnRed); break;
-                  }
-              }
-              else if (Sound == false){
-                  switch(ThreatLevel){
-                      case 1: SoundElement.image = loadSurface(soundOffBlue); break;
-                      case 2: SoundElement.image = loadSurface(soundOffYellow); break;
-                      case 3: SoundElement.image = loadSurface(soundOffRed); break;
-                  }
-              }
-          }
+        SoundElement.posX = 30;
+        SoundElement.posY = (SCREEN_HEIGHT - 41) + 4;
+        if (Mx < (66) && Mx >(28)
+            && My > (SCREEN_HEIGHT - 41) && My < (SCREEN_HEIGHT - 41 + 38)) {
+            if (e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_LEFT) {
+                if (Sound) Sound = false;
+                else Sound = true;
+            }
+            if (Sound == true) {
+                switch (ThreatLevel) {
+                case 1: SoundElement.image = loadSurface(soundOnHoverBlue); break;
+                case 2: SoundElement.image = loadSurface(soundOnHoverYellow); break;
+                case 3: SoundElement.image = loadSurface(soundOnHoverRed); break;
+                }
+            }
+            else if (Sound == false) {
+                switch (ThreatLevel) {
+                case 1: SoundElement.image = loadSurface(soundOffHoverBlue); break;
+                case 2: SoundElement.image = loadSurface(soundOffHoverYellow); break;
+                case 3: SoundElement.image = loadSurface(soundOffHoverRed); break;
+                }
+            }
+        }
+        else {
+            if (Sound == true) {
+                switch (ThreatLevel) {
+                case 1: SoundElement.image = loadSurface(soundOnBlue); break;
+                case 2: SoundElement.image = loadSurface(soundOnYellow); break;
+                case 3: SoundElement.image = loadSurface(soundOnRed); break;
+                }
+            }
+            else if (Sound == false) {
+                switch (ThreatLevel) {
+                case 1: SoundElement.image = loadSurface(soundOffBlue); break;
+                case 2: SoundElement.image = loadSurface(soundOffYellow); break;
+                case 3: SoundElement.image = loadSurface(soundOffRed); break;
+                }
+            }
+        }
 
-          /*EGMen Button*/
-          if(Mx < (268) && Mx > (238)
-          && My < (274) && My > (238)){
-              if(ThreatLevel == 3) EGMen.image = loadSurface(menuHoverRed);
-              if(ThreatLevel == 1) EGMen.image = loadSurface(menuHoverBlue);
-          }
-          else{
-              if(ThreatLevel == 3) EGMen.image = loadSurface(menuRed);
-              if(ThreatLevel == 1) EGMen.image = loadSurface(menuBlue);
-          }
+        /*EGMen Button*/
+        if (Mx < (268) && Mx >(238)
+            && My < (274) && My >(238)) {
+            if (ThreatLevel == 3) EGMen.image = loadSurface(menuHoverRed);
+            if (ThreatLevel == 1) EGMen.image = loadSurface(menuHoverBlue);
+        }
+        else {
+            if (ThreatLevel == 3) EGMen.image = loadSurface(menuRed);
+            if (ThreatLevel == 1) EGMen.image = loadSurface(menuBlue);
+        }
 
-          /*Replay Button*/
-          if(Mx < (335) && Mx > (305)
-          && My < (306) && My > (272)){
-              if(ThreatLevel == 3) EGR.image = loadSurface(returnHoverRed);
-              if(ThreatLevel == 1) EGR.image = loadSurface(returnHoverBlue);
-              if(e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_LEFT && play == -1){
+        /*Replay Button*/
+        if (Mx < (335) && Mx >(305)
+            && My < (306) && My >(272)) {
+            if (ThreatLevel == 3) EGR.image = loadSurface(returnHoverRed);
+            if (ThreatLevel == 1) EGR.image = loadSurface(returnHoverBlue);
+            if (e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_LEFT && play == -1) {
                 EGUI.image = NULL;
                 EGR.image = NULL;
                 EGRank.image = NULL;
@@ -1182,20 +1184,20 @@ void Buttons(SDL_Event e){
                 play = 0;
                 /*PreparePlay();*/
             }
-          }
-          else{
-              if(ThreatLevel == 3) EGR.image = loadSurface(returnRed);
-              if(ThreatLevel == 1) EGR.image = loadSurface(returnBlue);
-          }
+        }
+        else {
+            if (ThreatLevel == 3) EGR.image = loadSurface(returnRed);
+            if (ThreatLevel == 1) EGR.image = loadSurface(returnBlue);
+        }
 
-          /*Ranking Button
-          372, 30
-          238, 34*/
-          if(Mx < (402) && Mx > (372)
-          && My < (274) && My > (238)){
-              if(ThreatLevel == 3) EGRank.image = loadSurface(rankHoverRed);
-              if(ThreatLevel == 1) EGRank.image = loadSurface(rankHoverBlue);
-              if(e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_LEFT && play == -1){
+        /*Ranking Button
+        372, 30
+        238, 34*/
+        if (Mx < (402) && Mx >(372)
+            && My < (274) && My >(238)) {
+            if (ThreatLevel == 3) EGRank.image = loadSurface(rankHoverRed);
+            if (ThreatLevel == 1) EGRank.image = loadSurface(rankHoverBlue);
+            if (e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_LEFT && play == -1) {
                 EGUI.image = NULL;
                 EGR.image = NULL;
                 EGRank.image = NULL;
@@ -1205,12 +1207,12 @@ void Buttons(SDL_Event e){
                 makeBACKGROUND();
                 /*printf("%d\n", ThreatLevel);*/
                 play = 0;
-              }
-          }
-          else{
-              if(ThreatLevel == 3) EGRank.image = loadSurface(rankRed);
-              if(ThreatLevel == 1) EGRank.image = loadSurface(rankBlue);
-          }
+            }
+        }
+        else {
+            if (ThreatLevel == 3) EGRank.image = loadSurface(rankRed);
+            if (ThreatLevel == 1) EGRank.image = loadSurface(rankBlue);
+        }
     }
 }
 
@@ -1218,41 +1220,44 @@ void Play() {
     SDL_Event e;
     interface = 2;
 
-    if(!play){
+    if (!play) {
         PreparePlay();
     }
 
-    while( SDL_PollEvent( &e ) != 0 )
+    while (SDL_PollEvent(&e) != 0)
     {
         Buttons(e);
-        if( e.type == SDL_QUIT )
+        if (e.type == SDL_QUIT)
         {
             quit = true;
         }
-        else if( e.type == SDL_KEYDOWN )
+        else if (e.type == SDL_KEYDOWN)
         {
-            switch( e.key.keysym.sym )
+            switch (e.key.keysym.sym)
             {
-                case SDLK_UP: /* printf("UP\n"); */
+            case SDLK_UP: /* printf("UP\n"); */
                 break;
-                case SDLK_DOWN: /*if(play == 1) gridDown();*/
+            case SDLK_DOWN: /*if(play == 1) gridDown();*/
                 break;
-                case SDLK_ESCAPE: quit = true;
+            case SDLK_KP_5:
+                PlayWin();
+                break;
+            case SDLK_ESCAPE: quit = true;
                 break;
             }
         }
         else if ((e.type == SDL_MOUSEBUTTONDOWN) && e.button.button == SDL_BUTTON_LEFT && !clicked) shoot();
     }
 
-    if(clicked)
+    if (clicked)
     {
         movePLAYER();
         collision();
         /*checkAround(n);*/
     }
 
-    if(maxhealth == 0){
-      maxhealth = 6;
+    if (maxhealth == 0) {
+        maxhealth = 6;
     }
 
     if (health == 0) {
@@ -1278,19 +1283,19 @@ int init() {
     srand(time(NULL));
 
     /*Initialize SDL*/
-    if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
+    if (SDL_Init(SDL_INIT_VIDEO) < 0)
     {
-        printf( "SDL could not initialize! SDL Error: %s\n", SDL_GetError() );
+        printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
         success = false;
     }
     else
     {
         /*Create window*/ /*##Trocar o nome*/
-        gWindow = SDL_CreateWindow( "Omega Shooter", SDL_WINDOWPOS_UNDEFINED,
-                                    SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
-        if( gWindow == NULL )
+        gWindow = SDL_CreateWindow("Omega Shooter", SDL_WINDOWPOS_UNDEFINED,
+            SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+        if (gWindow == NULL)
         {
-            printf( "Window could not be created! SDL Error: %s\n", SDL_GetError() );
+            printf("Window could not be created! SDL Error: %s\n", SDL_GetError());
             success = false;
         }
 
@@ -1298,26 +1303,26 @@ int init() {
         {
             /*Initialize JPG and PNG loading */
             int imgFlags = IMG_INIT_JPG | IMG_INIT_PNG;
-            if( !( IMG_Init( imgFlags ) & imgFlags ) )
+            if (!(IMG_Init(imgFlags) & imgFlags))
             {
-                printf( "SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError() );
+                printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
                 success = false;
             }
 
             else
             {
                 /*Get window surface*/
-                gScreenSurface = SDL_GetWindowSurface( gWindow );
+                gScreenSurface = SDL_GetWindowSurface(gWindow);
             }
 
             /*Initialize TTF*/
-            if (TTF_Init() == -1){
+            if (TTF_Init() == -1) {
                 printf("SDL could not initialize TTF! SDL Error: %s\n", SDL_GetError());
                 success = false;
             }
 
             /*Initialize SDL_mixer */
-            if( Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 4096 ) == -1 )
+            if (Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096) == -1)
                 success = false;
 
             /* Load our sound effect */
@@ -1346,16 +1351,16 @@ int loadMedia()
     int success = true;
     /*uint32_t colorKey;*/
 
-    if( BallSurface == NULL)
+    if (BallSurface == NULL)
     {
-        printf( "Failed to load image! SDL Error: %s\n", SDL_GetError() );
+        printf("Failed to load image! SDL Error: %s\n", SDL_GetError());
         success = false;
     }
 
     else
     {
-        Uint32 colorkey = SDL_MapRGBA( BallSurface->format, 0x00, 0x00, 0x00, 0xFF );
-        SDL_SetColorKey( BallSurface,1, colorkey );
+        Uint32 colorkey = SDL_MapRGBA(BallSurface->format, 0x00, 0x00, 0x00, 0xFF);
+        SDL_SetColorKey(BallSurface, 1, colorkey);
     }
     return success;
 }
@@ -1370,22 +1375,22 @@ void closing()
     /*printf("freed Screen surface\n");*/
 
     /*Free loaded image*/
-    if(BallSurface != NULL)
-        SDL_FreeSurface( BallSurface );
+    if (BallSurface != NULL)
+        SDL_FreeSurface(BallSurface);
     /*printf("freed ballsurface\n");*/
 
     /*for (i=0; i<BALLY; i++)
         for(j=0; j<BALLX; j++)
             if(ballgrid[i][j].image != NULL)*/
-                /*SDL_FreeSurface(ballgrid[i][j].image);*/
-    /*printf("freed all npc surfaces\n");*/
+            /*SDL_FreeSurface(ballgrid[i][j].image);*/
+/*printf("freed all npc surfaces\n");*/
 
-    if(ball.image != NULL)
+    if (ball.image != NULL)
         /*SDL_FreeSurface(ball.image);*/
     /*printf("freed ball.npc surface\n");*/
 
-    if(nextball.image != NULL)
-        SDL_FreeSurface(nextball.image);
+        if (nextball.image != NULL)
+            SDL_FreeSurface(nextball.image);
     /*printf("freed nextball surface\n");*/
 
     /*for (i=0; i<6; i++)
@@ -1410,7 +1415,7 @@ void closing()
     /*printf("freed bakcground image surface\n");*/
 
     /*Destroy window*/
-    SDL_DestroyWindow( gWindow );
+    SDL_DestroyWindow(gWindow);
     gWindow = NULL;
     /*printf("freed gWindow\n");*/
 
@@ -1435,38 +1440,31 @@ void closing()
     /*printf("quitted SDL\n");*/
 }
 
-SDL_Surface* loadSurface( char *path )
+SDL_Surface* loadSurface(char* path)
 {
-    /*The final optimized image*/
-    SDL_Surface* optimizedSurface = NULL;
 
-    /*Load image at specified path*/
-    SDL_Surface* loadedSurface = IMG_Load( path );
-    if( loadedSurface == NULL )
-    {
-        printf( "Unable to load image %s! SDL_image Error: %s\n", path, IMG_GetError() );
-    }
-
-    else
-    {
-        /*Convert surface to screen format*/
-        optimizedSurface = SDL_ConvertSurface( loadedSurface, gScreenSurface->format, 0 );
-        if( optimizedSurface == NULL )
+    if (requestSurface(path) == NULL) {
+        SDL_Surface* loadedSurface = IMG_Load(path);
+        if (loadedSurface == NULL)
         {
-            printf( "Unable to optimize image %s! SDL Error: %s\n", path, SDL_GetError() );
+            printf("Unable to load image %s! SDL_image Error: %s\n", path, IMG_GetError());
+            exit(502);
         }
-
-        else
-        {
-            Uint32 colorkey = SDL_MapRGBA( optimizedSurface->format, 0x00, 0x00, 0x00, 0xFF);
-            SDL_SetColorKey( optimizedSurface,1, colorkey );
-        }
-
-        /*Get rid of old loaded surface*/
-        SDL_FreeSurface( loadedSurface );
+        return loadedSurface;
     }
+    else return requestSurface(path);
 
-    return optimizedSurface;
+
+
+    /*
+    SDL_Surface* loadedSurface = IMG_Load(path);
+    if (loadedSurface == NULL)
+    {
+        printf("Unable to load image %s! SDL_image Error: %s\n", path, IMG_GetError());
+        exit(502);
+    }
+    return loadedSurface;
+    */
 }
 
 int PrepareGame()
@@ -1481,9 +1479,11 @@ int PrepareGame()
         return 1;
     }
 
-
+    //resourceInit();
     ballcolor = rand() % COLORS + 1;
     BallSurface = GetColor(ballcolor);
+
+    resourceInit();
 
     /*Load media*/
     if (!loadMedia())
@@ -1495,15 +1495,16 @@ int PrepareGame()
 
     interface = 1;
     /*####*/
-    Sound = true;
+    Sound = false;
 
     /*Create Background*/
     makeBACKGROUND();
 
     /*Create PLAYER*/
 
-    ball = createPLAYER((SCREEN_WIDTH / 2 - IMAGE_WIDTH / 2),
-        (SCREEN_HEIGHT - IMAGE_HEIGHT) - 4,
+    ball = createPLAYER(
+        (SCREEN_WIDTH / 2 - IMAGE_WIDTH / 2) + 1,
+        (SCREEN_HEIGHT - IMAGE_HEIGHT) - 5,
         0,
         0,
         ballcolor,
@@ -1514,8 +1515,8 @@ int PrepareGame()
     BallSurface = GetColor(ballcolor);
 
     nextball = createELEMENT(
-        193,
-        (SCREEN_HEIGHT - IMAGE_HEIGHT) + 1,
+        135,
+        (SCREEN_HEIGHT - IMAGE_HEIGHT) - 5,
         ballcolor,
         GetColor(ballcolor));
 
@@ -1590,7 +1591,7 @@ int PrepareGame()
     return 0;
 }
 
-void PreparePlay(){
+void PreparePlay() {
     /*Create Ball Grid*/
     maxhealth = 5;
     ThreatLevel = 1;
@@ -1604,10 +1605,10 @@ void PreparePlay(){
     play = 1;
 }
 
-int PlayWin(){
+int PlayWin() {
     int i, j;
-    for(i=1, j=0; j<BALLX; j++){
-        if(ballgrid[i][j].color){
+    for (i = 1, j = 0; j < BALLX; j++) {
+        if (ballgrid[i][j].color) {
             return 0;
         }
     }
@@ -1615,13 +1616,13 @@ int PlayWin(){
     nextball.image = NULL;
     clicked = 1;
     play = -1;
-    Score<<=1;
+    Score <<= 1;
     cleanGrid();
     EndGameUI();
     return 1;
 }
 
-int PlayEnd(){
+int PlayEnd() {
     int i, j, stop = false;
     for (i = 16, j = 0; j < BALLX; j++) {
         if (ballgrid[i][j].color) {
@@ -1646,7 +1647,7 @@ int PlayEnd(){
     return 1;
 }
 
-void printGrid(){
+void printGrid() {
     int i, j;
     for (i = 0; i < BALLY; i++) {
         for (j = 0; j < BALLX; j++) {
@@ -1889,6 +1890,7 @@ void checkDestruction(NPC* npc, int checkcolor)
     for (n = 0; n <= 1; n++) {
         if ((npc->indexY) % 2 == n) {
             /*case 3*/
+            printf("\n\nballgrid: %d\n\n", ballgrid[(npc->indexY) + 1][(npc->indexX) + n].color);
             if (ballgrid[(npc->indexY) + 1][(npc->indexX) + n].color == checkcolor) {
                 ballCount++;
                 checkDestruction(&ballgrid[(npc->indexY) + 1][(npc->indexX) + n], checkcolor);
@@ -2003,72 +2005,85 @@ void GetLifeSurface() {
 void GetScore() {
     /*The TTF_Font*/
     TTF_Font* font = NULL;
-    TTF_Font* bigfont = NULL;
+    //TTF_Font* bigfont = NULL;
+    TTF_Font* shadow = NULL;
 
     /*The TTF Color*/
-    SDL_Color ttfColor;
+    SDL_Color fontColor = { 255, 255, 255 };
+    SDL_Color shadowColor = { 0, 0, 0 };
 
     /*The Message Surface*/
-    SDL_Surface* surfaceMessage = NULL;
-    SDL_Surface* bigSurface = NULL;
+    SDL_Surface* scoreSurface = NULL;
+    SDL_Surface* scoreShadowSurface = NULL;
+    SDL_Surface* endScoreSurface = NULL;
+    SDL_Surface* endScoreShadowSurface = NULL;
 
-    /*The Message Rect*/
-    SDL_Rect Message_Rect;
+    /*SDL_Rect для сообщения с количеством очков*/
+    SDL_Rect messageRect;
 
     char scoreString[16];
 
     /* Load TTF font */
-    font = TTF_OpenFont(TTF_PATH, 10);
+    font = TTF_OpenFont(TTF_PATH, 24);
+    shadow = TTF_OpenFont(TTF_PATH, 24);
+
     if (font == NULL)
         exit(748);
 
     switch (ThreatLevel) {
-    case 1: ttfColor.r = 145;
-        ttfColor.g = 223;
-        ttfColor.b = 224;
+    case 1: // rgb(52, 152, 219)
+        fontColor.r = 52;
+        fontColor.g = 152;
+        fontColor.b = 219;
         break;
-    case 2:
-        ttfColor.r = 213;
-        ttfColor.g = 216;
-        ttfColor.b = 118;
+    case 2: // rgb(241, 196, 15)
+        fontColor.r = 241;
+        fontColor.g = 196;
+        fontColor.b = 15;
         break;
-    case 3:
-        ttfColor.r = 224;
-        ttfColor.g = 68;
-        ttfColor.b = 68;
+    case 3: // rgb(231, 76, 60)
+        fontColor.r = 231;
+        fontColor.g = 76;
+        fontColor.b = 60;
         break;
     }
 
-    Message_Rect.x = SCREEN_WIDTH / 2 + 69;
-    Message_Rect.y = SCREEN_HEIGHT - 20;
-    Message_Rect.w = 100;
-    Message_Rect.h = 38;
+    messageRect.x = SCREEN_WIDTH / 2 + 98;
+    messageRect.y = SCREEN_HEIGHT - 37;
+    messageRect.w = 100;
+    messageRect.h = 38;
 
-    sprintf(scoreString, "%012d", Score);
+    sprintf(scoreString, u8"%012d", Score);
     /*printf("String Score = %s\n", scoreString);*/
-    surfaceMessage = TTF_RenderText_Solid(font, scoreString, ttfColor);
-    if (!surfaceMessage) {
+    TTF_SetFontOutline(shadow, 1);
+    scoreShadowSurface = TTF_RenderUTF8_Blended(shadow, scoreString, shadowColor);
+    scoreSurface = TTF_RenderUTF8_Blended(font, scoreString, fontColor);
+    if (!scoreSurface) {
         printf("Failed to render Text!\n");
         /*exit(734);*/
     }
 
-    SDL_BlitSurface(surfaceMessage, NULL, gScreenSurface, &Message_Rect);
-    SDL_FreeSurface(surfaceMessage);
-
+    SDL_BlitSurface(scoreShadowSurface, NULL, gScreenSurface, &messageRect);
+    SDL_BlitSurface(scoreSurface, NULL, gScreenSurface, &messageRect);
+    //play = -1;
     if (play == -1) {
-        bigfont = TTF_OpenFont(TTF_PATH, 20);
-        Message_Rect.x = SCREEN_WIDTH / 2 - 115;
-        Message_Rect.y = SCREEN_HEIGHT / 2 + 90;
-        Message_Rect.w = 200;
-        Message_Rect.h = 76;
-        sprintf(scoreString, "Score: %08d", Score);
-        bigSurface = TTF_RenderText_Solid(bigfont, scoreString, ttfColor);
-        SDL_BlitSurface(bigSurface, NULL, gScreenSurface, &Message_Rect);
-        TTF_CloseFont(bigfont);
+        messageRect.x = SCREEN_WIDTH / 2 - 10;
+        messageRect.y = SCREEN_HEIGHT / 2 - 69;
+        messageRect.w = 200;
+        messageRect.h = 76;
+        sprintf(scoreString, "%08d", Score);
+        endScoreShadowSurface = TTF_RenderUTF8_Blended(shadow, scoreString, shadowColor);
+        endScoreSurface = TTF_RenderUTF8_Blended(font, scoreString, fontColor);
+        SDL_BlitSurface(endScoreShadowSurface, NULL, gScreenSurface, &messageRect); 
+        SDL_BlitSurface(endScoreSurface, NULL, gScreenSurface, &messageRect);
     }
 
+    SDL_FreeSurface(scoreShadowSurface);
+    SDL_FreeSurface(scoreSurface);
+    SDL_FreeSurface(endScoreSurface);
+    SDL_FreeSurface(endScoreShadowSurface);
     TTF_CloseFont(font);
-    /*surfaceMessage = NULL;*/
+    TTF_CloseFont(shadow);
 }
 
 void EndGameUI() {

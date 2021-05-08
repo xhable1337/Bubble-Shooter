@@ -1,4 +1,6 @@
 ﻿#define MODELS 2 // Выбор моделей для игры (1 - планеты, 2 - шарики)
+#include <SDL.h>
+#include <SDL_image.h>
 
 //// Ассеты для меню
 char* menuBG = "./Images/menuBG.png";                           // Фон для меню			            
@@ -10,10 +12,10 @@ char* credits = "./Images/credits.png";                         // Экран и
 
 //// Внутриигровые ассеты интерфейса	
 // Фон
-char* gameBG = "./Images/BG2.png";                              // Фон во время игры
+char* gameBG = "./Images/skyBG640x480.jpg";                              // Фон во время игры
 
 // Низкий уровень угрозы							            
-char* uiBlue = "./Images/uiBlue.png";                           // Синий игровой UI
+char* uiBlue = "./Images/uiBlue1.png";                           // Синий игровой UI
 char* menuBlue = "./Images/menuBlue.png";                       // Синяя кнопка главного меню
 char* menuHoverBlue = "./Images/menuHoverBlue.png";             // Синяя кнопка главного меню при наведении мыши
 char* soundOnBlue = "./Images/soundOnBlue.png";                 // Синяя кнопка "звук включен"
@@ -23,7 +25,7 @@ char* soundOffHoverBlue = "./Images/soundOffHoverBlue.png";     // Синяя к
 char* lifeBlue = "./Images/lifeBlue.png";                       // Синий индикатор жизней
                                                                 
 // Средний уровень угрозы							            
-char* uiYellow = "./Images/uiYellow.png";                       // Жёлтый игровой UI
+char* uiYellow = "./Images/uiYellow1.png";                       // Жёлтый игровой UI
 char* menuYellow = "./Images/menuYellow.png";                   // Жёлтая кнопка главного меню
 char* menuHoverYellow = "./Images/menuHoverYellow.png";         // Жёлтая кнопка главного меню при наведении мыши
 char* soundOnYellow = "./Images/soundOnYellow.png";             // Жёлтая кнопка "звук включен"
@@ -33,7 +35,7 @@ char* soundOffHoverYellow = "./Images/soundOffHoverYellow.png"; // Жёлтая 
 char* lifeYellow = "./Images/lifeYellow.png";                   // Жёлтый индикатор жизней
                                                         
 // Высокий уровень угрозы							    
-char* uiRed = "./Images/uiRed.png";                             // Красный игровой UI
+char* uiRed = "./Images/uiRed1.png";                             // Красный игровой UI
 char* menuRed = "./Images/menuRed.png";                         // Красная кнопка главного меню
 char* menuHoverRed = "./Images/menuHoverRed.png";               // Красная кнопка главного меню при наведении мыши
 char* soundOnRed = "./Images/soundOnRed.png";                   // Красная кнопка "звук включен"
@@ -73,3 +75,198 @@ char* color4 = "./Images/green.png";
 char* color5 = "./Images/blue.png";
 char* color6 = "./Images/purple.png";
 #endif
+
+// Дальше находятся вспомогательные функции загрузки текстур.
+// Во избежание проблем со зрением, просьба не заглядывать в код.
+// Спасибо!
+
+SDL_Surface* load(char* path)
+{
+    /*Load image at specified path*/
+    SDL_Surface* loadedSurface = IMG_Load(path);
+    if (loadedSurface == NULL)
+    {
+        printf("[%s]: OK", path);
+        printf("Unable to load image %s! SDL_image Error: %s\n", path, IMG_GetError());
+        exit(502);
+    }
+    else 
+    {
+        printf("[%s]: OK\n", path);
+    }
+
+    return loadedSurface;
+}
+
+// Элементы меню
+SDL_Surface* mBG, * mBG2, * arr, * tP, * creds;
+
+// Фон
+SDL_Surface* gBG;
+
+// 6 цветов шариков
+SDL_Surface* c1, * c2, * c3, * c4, * c5, * c6;
+
+// Элементы синего интерфейса
+SDL_Surface* uiB, * sOnB, * SOnHB, * SOffB, * SOffHB, * lB, * mB, * mHB;
+
+// Элементы жёлтого интерфейса
+SDL_Surface* uiY, * sOnY, * SOnHY, * SOffY, * SOffHY, * lY, * mY, * mHY;
+
+// Элементы красного интерфейса
+SDL_Surface* uiR, * sOnR, * SOnHR, * SOffR, * SOffHR, * lR, * mR, * mHR;
+
+// Элементы интерфейса проигрыша
+SDL_Surface* def, * retR, * retHR, * rankR, * rankHR;
+
+// Элементы интерфейса выигрыша
+SDL_Surface* vic, * retB, * retHB, * rankB, * rankHB;
+
+
+// Предзагружает все surface в память. (Исправлена утечка памяти)
+void resourceInit() {
+    // Загрузка ассетов меню
+    {
+        mBG = load(menuBG);
+        mBG2 = load(menuBG2);
+        arr = load(arrow);
+        tP = load(topPlayers);
+        creds = load(credits);
+    }
+
+    // Загрузка фона
+    load(gameBG);
+
+    // Загрузка шариков
+    {
+        c1 = load(color1);
+        c2 = load(color2);
+        c3 = load(color3);
+        c4 = load(color4);
+        c5 = load(color5);
+        c6 = load(color6);
+    }
+
+    // Загрузка элементов синего интерфейса
+    {
+        uiB = load(uiBlue);
+        sOnB = load(soundOnBlue);
+        SOnHB = load(soundOnHoverBlue);
+        SOffB = load(soundOffBlue);
+        SOffHB = load(soundOffHoverBlue);
+        lB = load(lifeBlue);
+        mB = load(menuBlue);
+        mHB = load(menuHoverBlue);
+    }
+
+    // Загрузка элементов жёлтого интерфейса
+    {
+        uiY = load(uiYellow);
+        sOnY = load(soundOnYellow);
+        SOnHY = load(soundOnHoverYellow);
+        SOffY = load(soundOffYellow);
+        SOffHY = load(soundOffHoverYellow);
+        lY = load(lifeYellow);
+        mY = load(menuYellow);
+        mHY = load(menuHoverYellow);
+    }
+
+    // Загрузка элементов красного интерфейса
+    {
+        uiR = load(uiRed);
+        sOnR = load(soundOnRed);
+        SOnHR = load(soundOnHoverRed);
+        SOffR = load(soundOffRed);
+        SOffHR = load(soundOffHoverRed);
+        lR = load(lifeRed);
+        mR = load(menuRed);
+        mHR = load(menuHoverRed);
+    }
+
+    // Загрузка элементов интерфейса проигрыша
+    {
+        def = load(defeat);
+        retR = load(returnRed);
+        retHR = load(returnHoverRed);
+        rankR = load(rankRed);
+        rankHR = load(rankHoverRed);
+    }
+
+    // Загрузка элементов интерфейса выигрыша
+    {
+        vic = load(victory);
+        retB = load(returnBlue);
+        retHB = load(returnHoverBlue);
+        rankB = load(rankBlue);
+        rankHB = load(rankHoverBlue);
+    }
+}
+
+// Возвращает предзагруженный surface. (Исправлена утечка памяти)
+SDL_Surface* requestSurface(char* path) {
+    // Возврат фона
+    if (path == gameBG) return gBG;
+
+    // Возврат ассетов меню
+    else if (path == menuBG) return mBG;
+    else if (path == menuBG2) return mBG2;
+    else if (path == arrow) return arr;
+    else if (path == topPlayers) return tP;
+    else if (path == credits) return creds;
+    
+    // Возврат шариков
+    else if (path == color1) return c1;
+    else if (path == color2) return c2;
+    else if (path == color3) return c3;
+    else if (path == color4) return c4;
+    else if (path == color5) return c5;
+    else if (path == color6) return c6;
+
+    // Возврат элементов синего интерфейса
+    else if (path == uiBlue) return uiB;
+    else if (path == soundOnBlue) return sOnB;
+    else if (path == soundOnHoverBlue) return SOnHB;
+    else if (path == soundOffBlue) return SOffB;
+    else if (path == soundOffHoverBlue) return SOffHB;
+    else if (path == lifeBlue) return lB;
+    else if (path == menuBlue) return mB;
+    else if (path == menuHoverBlue) return mHB;
+
+    // Возврат элементов жёлтого интерфейса
+    else if (path == uiYellow) return uiY;
+    else if (path == soundOnYellow) return sOnY;
+    else if (path == soundOnHoverYellow) return SOnHY;
+    else if (path == soundOffYellow) return SOffY;
+    else if (path == soundOffHoverYellow) return SOffHY;
+    else if (path == lifeYellow) return lY;
+    else if (path == menuYellow) return mY;
+    else if (path == menuHoverYellow) return mHY;
+
+    // Возврат элементов красного интерфейса
+    else if (path == uiRed) return uiR;
+    else if (path == soundOnRed) return sOnR;
+    else if (path == soundOnHoverRed) return SOnHR;
+    else if (path == soundOffRed) return SOffR;
+    else if (path == soundOffHoverRed) return SOffHR;
+    else if (path == lifeRed) return lR;
+    else if (path == menuRed) return mR;
+    else if (path == menuHoverRed) return mHR;
+
+    // Загрузка элементов интерфейса проигрыша
+    else if (path == defeat) return def;
+    else if (path == returnRed) return retR;
+    else if (path == returnHoverRed) return retHR;
+    else if (path == rankRed) return rankR;
+    else if (path == rankHoverRed) return rankHR;
+
+    // Загрузка элементов интерфейса выигрыша
+    else if (path == victory) return vic;
+    else if (path == returnBlue) return retB;
+    else if (path == returnHoverBlue) return retHB;
+    else if (path == rankBlue) return rankB;
+    else if (path == rankHoverBlue) return rankHB;
+
+    
+
+    else return NULL;
+}

@@ -65,3 +65,6 @@ extern char* color3;              // Цвет шарика под номером
 extern char* color4;              // Цвет шарика под номером 4
 extern char* color5;              // Цвет шарика под номером 5
 extern char* color6;              // Цвет шарика под номером 6
+
+void resourceInit();
+SDL_Surface* requestSurface(char* path);
