@@ -26,6 +26,7 @@
 #include <stdlib.h>
 
 #include "resource.h"
+#include "leaderboard.h"
 
 
 
@@ -73,6 +74,7 @@ const int IMAGE_WIDTH = 32;
 const int IMAGE_HEIGHT = 32;
 
 int a = 1;
+int leaderboard[8];
 
 
 typedef struct _BACKGROUND
@@ -211,6 +213,8 @@ NPC* destructionStart = NULL;
 
  /*Starts up SDL and creates window*/
 int init();
+
+void renderLeaderboard();
 
 /*Loads media*/
 int loadMedia();
@@ -845,7 +849,7 @@ void RefreshScreen()
     /*Main Menu Refresh Screen*/
     if (interface == 1) {
         drawELEMENT(SoundElement, 38, 38);
-        drawELEMENT(ArrowElement, 38, 38);
+        drawELEMENT(ArrowElement, 210, 73);
     }
 
     /*Play Refresh Screen*/
@@ -854,9 +858,9 @@ void RefreshScreen()
         drawELEMENT(PMUI, SCREEN_WIDTH, SCREEN_HEIGHT);
         drawPLAYER(ball);
         drawELEMENT(SoundElement, 38, 38);
-        drawELEMENT(EGelement, 38, 38);
+        drawELEMENT(EGelement, 38, 38); 
         for (i = 0; i < health; i++) {
-            drawELEMENT(lifeballs[i], 8, 10);
+            drawELEMENT(lifeballs[i], 10, 10);
         }
 
         for (i = 0; i < BALLY; i++)
@@ -876,7 +880,8 @@ void RefreshScreen()
 
     /*Highscores Refresh Screen*/
     if (interface == 3) {
-        drawELEMENT(RankElement, 440, 440);
+        drawELEMENT(RankElement, 440, 350);
+        renderLeaderboard();
         drawELEMENT(EGelement, 38, 38);
     }
 
@@ -1036,35 +1041,37 @@ void Buttons(SDL_Event e) {
                 SoundElement.image = loadSurface(soundOffBlue);
         }
 
+        ArrowElement.posX = 56;
+
         /*Main Menu Buttons*/
-        if (!(Mx > 110 && Mx < 210 && My > 210 && My < 359)) {
+        if (!(Mx > 70 && Mx < 250 && My > 210 && My < 359)) {
             ArrowElement.image = NULL;
         }
-        else if (Mx > 110 && Mx < 210) {
+        else if (Mx > 70 && Mx < 250) {
             ArrowElement.image = loadSurface(arrow);
             if (My > 210 && My < 235) {
-                ArrowElement.posY = 208;
+                ArrowElement.posY = 184;
                 if (e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_LEFT) {
                     interface = 2;
                     makeBACKGROUND();
                 }
             }
             if (My > 250 && My < 275) {
-                ArrowElement.posY = 250;
+                ArrowElement.posY = 228;
                 if (e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_LEFT) {
                     interface = 3;
                     makeBACKGROUND();
                 }
             }
             if (My > 290 && My < 317) {
-                ArrowElement.posY = 292;
+                ArrowElement.posY = 269;
                 if (e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_LEFT) {
                     interface = 4;
                     makeBACKGROUND();
                 }
             }
             if (My > 332 && My < 359) {
-                ArrowElement.posY = 334;
+                ArrowElement.posY = 311;
                 if (e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_LEFT) {
                     quit = true;
                 }
@@ -1239,9 +1246,6 @@ void Play() {
                 break;
             case SDLK_DOWN: /*if(play == 1) gridDown();*/
                 break;
-            case SDLK_KP_5:
-                PlayWin();
-                break;
             case SDLK_ESCAPE: quit = true;
                 break;
             }
@@ -1372,31 +1376,14 @@ void closing()
     SDL_FreeSurface(gScreenSurface);
     gScreenSurface = NULL;
 
-    /*printf("freed Screen surface\n");*/
 
     /*Free loaded image*/
     if (BallSurface != NULL)
         SDL_FreeSurface(BallSurface);
-    /*printf("freed ballsurface\n");*/
 
-    /*for (i=0; i<BALLY; i++)
-        for(j=0; j<BALLX; j++)
-            if(ballgrid[i][j].image != NULL)*/
-            /*SDL_FreeSurface(ballgrid[i][j].image);*/
-/*printf("freed all npc surfaces\n");*/
-
-    if (ball.image != NULL)
-        /*SDL_FreeSurface(ball.image);*/
-    /*printf("freed ball.npc surface\n");*/
-
+    /*if (ball.image != NULL)
         if (nextball.image != NULL)
-            SDL_FreeSurface(nextball.image);
-    /*printf("freed nextball surface\n");*/
-
-    /*for (i=0; i<6; i++)
-        if(lifeballs[i].image != NULL)
-            SDL_FreeSurface(lifeballs[i].image);
-    printf("freed lifeballs surfaces\n");*/
+            SDL_FreeSurface(nextball.image);*/
 
     if (SoundElement.image != NULL)
         SDL_FreeSurface(SoundElement.image);
@@ -1419,16 +1406,6 @@ void closing()
     gWindow = NULL;
     /*printf("freed gWindow\n");*/
 
-    /* clean up our resources */
-    /*Mix_FreeChunk(wave);*/
-    /*if(music != NULL)
-       Mix_FreeMusic(music);
-    printf("freed music\n");*/
-
-    /* quit SDL_mixer */
-    /*Mix_CloseAudio();
-    printf("closed audio\n");*/
-
     /*Quit SDL subsystems*/
     IMG_Quit();
     /*printf("quitted img\n");*/
@@ -1442,7 +1419,6 @@ void closing()
 
 SDL_Surface* loadSurface(char* path)
 {
-
     if (requestSurface(path) == NULL) {
         SDL_Surface* loadedSurface = IMG_Load(path);
         if (loadedSurface == NULL)
@@ -1453,18 +1429,6 @@ SDL_Surface* loadSurface(char* path)
         return loadedSurface;
     }
     else return requestSurface(path);
-
-
-
-    /*
-    SDL_Surface* loadedSurface = IMG_Load(path);
-    if (loadedSurface == NULL)
-    {
-        printf("Unable to load image %s! SDL_image Error: %s\n", path, IMG_GetError());
-        exit(502);
-    }
-    return loadedSurface;
-    */
 }
 
 int PrepareGame()
@@ -1479,11 +1443,12 @@ int PrepareGame()
         return 1;
     }
 
-    //resourceInit();
     ballcolor = rand() % COLORS + 1;
     BallSurface = GetColor(ballcolor);
 
     resourceInit();
+    leaderboardInit(&leaderboard);
+    
 
     /*Load media*/
     if (!loadMedia())
@@ -1523,7 +1488,7 @@ int PrepareGame()
     for (i = 0; i < 5; i++) {
         lifeballs[i] = createELEMENT(
             (SCREEN_WIDTH / 3) - 24 + (i * 7) + 56,
-            (i % 2) ? (SCREEN_HEIGHT - IMAGE_HEIGHT) + 13 : (SCREEN_HEIGHT - IMAGE_HEIGHT) + 1,
+            (i % 2) ? (SCREEN_HEIGHT - IMAGE_HEIGHT) + 12 : (SCREEN_HEIGHT - IMAGE_HEIGHT) + 0,
             0,
             loadSurface(lifeBlue));
     }
@@ -1605,6 +1570,47 @@ void PreparePlay() {
     play = 1;
 }
 
+void renderLeaderboard() {
+    SDL_Surface* fontSurface;
+    TTF_Font* font;
+    SDL_Color fontColor = { 52,152,219 };
+
+    SDL_Surface* shadowSurface;
+    TTF_Font* shadow;
+    SDL_Color shadowColor = { 0,0,0 };
+
+    SDL_Rect scoreRect;
+
+    scoreRect.x = SCREEN_WIDTH / 2 - 50;
+    scoreRect.y = 95;
+    scoreRect.w = 100;
+    scoreRect.h = 38;
+
+    char scoreString[16];
+    font = TTF_OpenFont(TTF_PATH, 27);
+    shadow = TTF_OpenFont(TTF_PATH, 27);
+
+    TTF_SetFontOutline(shadow, 1);
+
+    
+    for (int i = 0; i < 8; i++)
+    {
+        sprintf(scoreString, u8"%012d", leaderboard[i]);
+        shadowSurface = TTF_RenderUTF8_Blended(shadow, scoreString, shadowColor);
+        fontSurface = TTF_RenderUTF8_Blended(font, scoreString, fontColor);
+        SDL_BlitSurface(shadowSurface, NULL, gScreenSurface, &scoreRect);
+        SDL_BlitSurface(fontSurface, NULL, gScreenSurface, &scoreRect);
+        SDL_FreeSurface(shadowSurface);
+        SDL_FreeSurface(fontSurface);
+        scoreRect.y += 33;
+    }
+
+    
+
+    TTF_CloseFont(font);
+    TTF_CloseFont(shadow);
+}
+
 int PlayWin() {
     int i, j;
     for (i = 1, j = 0; j < BALLX; j++) {
@@ -1644,6 +1650,7 @@ int PlayEnd() {
     play = -1;
     cleanGrid();
     EndGameUI();
+    leaderboardUpdate(&leaderboard, Score);
     return 1;
 }
 
@@ -1890,7 +1897,6 @@ void checkDestruction(NPC* npc, int checkcolor)
     for (n = 0; n <= 1; n++) {
         if ((npc->indexY) % 2 == n) {
             /*case 3*/
-            printf("\n\nballgrid: %d\n\n", ballgrid[(npc->indexY) + 1][(npc->indexX) + n].color);
             if (ballgrid[(npc->indexY) + 1][(npc->indexX) + n].color == checkcolor) {
                 ballCount++;
                 checkDestruction(&ballgrid[(npc->indexY) + 1][(npc->indexX) + n], checkcolor);
@@ -2052,7 +2058,7 @@ void GetScore() {
     messageRect.y = SCREEN_HEIGHT - 37;
     messageRect.w = 100;
     messageRect.h = 38;
-
+    
     sprintf(scoreString, u8"%012d", Score);
     /*printf("String Score = %s\n", scoreString);*/
     TTF_SetFontOutline(shadow, 1);
@@ -2076,6 +2082,7 @@ void GetScore() {
         endScoreSurface = TTF_RenderUTF8_Blended(font, scoreString, fontColor);
         SDL_BlitSurface(endScoreShadowSurface, NULL, gScreenSurface, &messageRect); 
         SDL_BlitSurface(endScoreSurface, NULL, gScreenSurface, &messageRect);
+
     }
 
     SDL_FreeSurface(scoreShadowSurface);

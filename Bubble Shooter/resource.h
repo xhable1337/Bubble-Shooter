@@ -1,4 +1,9 @@
 ﻿#pragma once
+#include <SDL.h>
+#include <SDL_image.h>
+
+//// Файл сохранения таблицы рекордов
+extern char* leaderboardPath;
 
 //// Ассеты для меню
 extern char* menuBG;              // Фон для меню

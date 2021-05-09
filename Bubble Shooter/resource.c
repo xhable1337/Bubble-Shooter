@@ -1,21 +1,22 @@
-﻿#define MODELS 2 // Выбор моделей для игры (1 - планеты, 2 - шарики)
-#include <SDL.h>
+﻿#include <SDL.h>
 #include <SDL_image.h>
+
+//// Файл сохранения таблицы рекордов
+char* leaderboardPath = "./Misc/leaderboard.txt";
 
 //// Ассеты для меню
 char* menuBG = "./Images/menuBG.png";                           // Фон для меню			            
-char* menuBG2 = "./Images/BG.png";                              // Фон в пунктах меню
-char* arrow = "./Images/arrow.png";                             // Стрелка для меню
+char* menuBG2 = "./Images/skyMenuBG640x480.png";                // Фон в пунктах меню
+char* arrow = "./Images/menuButtonHover.png";                   // Стрелка для меню
 char* topPlayers = "./Images/topPlayers.png";                   // Таблица рекордов
 char* credits = "./Images/credits.png";                         // Экран информации
 
-
 //// Внутриигровые ассеты интерфейса	
 // Фон
-char* gameBG = "./Images/skyBG640x480.jpg";                              // Фон во время игры
+char* gameBG = "./Images/skyBG640x480.jpg";                     // Фон во время игры
 
 // Низкий уровень угрозы							            
-char* uiBlue = "./Images/uiBlue1.png";                           // Синий игровой UI
+char* uiBlue = "./Images/uiBlue.png";                           // Синий игровой UI
 char* menuBlue = "./Images/menuBlue.png";                       // Синяя кнопка главного меню
 char* menuHoverBlue = "./Images/menuHoverBlue.png";             // Синяя кнопка главного меню при наведении мыши
 char* soundOnBlue = "./Images/soundOnBlue.png";                 // Синяя кнопка "звук включен"
@@ -25,7 +26,7 @@ char* soundOffHoverBlue = "./Images/soundOffHoverBlue.png";     // Синяя к
 char* lifeBlue = "./Images/lifeBlue.png";                       // Синий индикатор жизней
                                                                 
 // Средний уровень угрозы							            
-char* uiYellow = "./Images/uiYellow1.png";                       // Жёлтый игровой UI
+char* uiYellow = "./Images/uiYellow.png";                       // Жёлтый игровой UI
 char* menuYellow = "./Images/menuYellow.png";                   // Жёлтая кнопка главного меню
 char* menuHoverYellow = "./Images/menuHoverYellow.png";         // Жёлтая кнопка главного меню при наведении мыши
 char* soundOnYellow = "./Images/soundOnYellow.png";             // Жёлтая кнопка "звук включен"
@@ -35,7 +36,7 @@ char* soundOffHoverYellow = "./Images/soundOffHoverYellow.png"; // Жёлтая 
 char* lifeYellow = "./Images/lifeYellow.png";                   // Жёлтый индикатор жизней
                                                         
 // Высокий уровень угрозы							    
-char* uiRed = "./Images/uiRed1.png";                             // Красный игровой UI
+char* uiRed = "./Images/uiRed.png";                             // Красный игровой UI
 char* menuRed = "./Images/menuRed.png";                         // Красная кнопка главного меню
 char* menuHoverRed = "./Images/menuHoverRed.png";               // Красная кнопка главного меню при наведении мыши
 char* soundOnRed = "./Images/soundOnRed.png";                   // Красная кнопка "звук включен"
@@ -60,21 +61,12 @@ char* rankHoverBlue = "./Images/rankHoverBlue.png";             // Синяя к
 
 //// Внутриигровые модели
 // Шарики
-#if (MODELS == 1)
-char* color1 = "./Images/Earth.png";
-char* color2 = "./Images/Saturn.png";
-char* color3 = "./Images/Neptune.png";
-char* color4 = "./Images/Venus.png";
-char* color5 = "./Images/Jupiter.png";
-char* color6 = "./Images/Mars.png";
-#elif (MODELS == 2)
 char* color1 = "./Images/red.png";
 char* color2 = "./Images/orange.png";
 char* color3 = "./Images/yellow.png";
 char* color4 = "./Images/green.png";
 char* color5 = "./Images/blue.png";
 char* color6 = "./Images/purple.png";
-#endif
 
 // Дальше находятся вспомогательные функции загрузки текстур.
 // Во избежание проблем со зрением, просьба не заглядывать в код.
