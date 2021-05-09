@@ -1528,7 +1528,7 @@ int PrepareGame()
         NULL);
 
     EGRank = createELEMENT(
-        372,
+        373,
         238,
         0,
         NULL);
