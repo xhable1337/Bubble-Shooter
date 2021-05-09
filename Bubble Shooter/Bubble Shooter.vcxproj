@@ -139,16 +139,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Bubble_shooter.c" />
-    <ClCompile Include="leaderboard.c" />
-    <ClCompile Include="resource.c" />
+    <ClCompile Include="Sources\Bubble_shooter.c" />
+    <ClCompile Include="Sources\leaderboard.c" />
+    <ClCompile Include="Sources\resource.c" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="leaderboard.h" />
-    <ClInclude Include="resource.h" />
+    <ClInclude Include="Sources\leaderboard.h" />
+    <ClInclude Include="Sources\resource.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

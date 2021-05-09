@@ -18,21 +18,21 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Bubble_shooter.c">
+    <ClCompile Include="Sources\Bubble_shooter.c">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="resource.c">
+    <ClCompile Include="Sources\leaderboard.c">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="leaderboard.c">
+    <ClCompile Include="Sources\resource.c">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="resource.h">
+    <ClInclude Include="Sources\leaderboard.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="leaderboard.h">
+    <ClInclude Include="Sources\resource.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
