@@ -20,14 +20,7 @@ Repo link: https://github.com/xhable1337/Bubble-Shooter
 #include "resource.h"
 #include "leaderboard.h"
 
-
-
 #define DELAY 5
-
-#define WAV_PATH "./Sounds/Kick-Drum-1.wav"
-//#define MUS_PATH "./Sounds/NES Ver. BAYONETTA - Fly Me To The Moon ( Climax Mix ).mp3"
-#define MUS_PATH "./Sounds/Kick-Drum-1.wav"
-#define TTF_PATH "./TTF/font.ttf"
 
 /*
  * Constants
@@ -126,13 +119,17 @@ int health = 0;
 int maxhealth = 0;
 int Sound;
 int Score;
+int musicVolume = 100;
+int soundsVolume = 100;
 char NickString[16];
 
 /*The window we'll be rendering to*/
 SDL_Window* gWindow = NULL;
 
-/* Our wave file */
-Mix_Chunk* wave = NULL;
+/* Our wave files */
+Mix_Music* bubblePop = NULL;
+Mix_Music* synthPop = NULL;
+Mix_Music* shot = NULL;
 
 /* Our music file */
 Mix_Music* music = NULL;
@@ -170,8 +167,8 @@ UIELEMENT EGMen;
 /*EndGame Ranking*/
 UIELEMENT EGRank;
 
-/*Credits UI*/
-UIELEMENT CredElement;
+/*Settings UI*/
+UIELEMENT SettingsElement;
 
 /*Ranking UI*/
 UIELEMENT RankElement;
@@ -330,8 +327,8 @@ void MainMenu();
 /*Highscores Function*/
 void Highscores();
 
-/*Credits Function*/
-void Credits();
+/*Settings Function*/
+void Settings();
 
 /*Sound Button Function*/
 void Buttons(SDL_Event e);
@@ -339,6 +336,8 @@ void Buttons(SDL_Event e);
 /*Shoot Ball Player*/
 void shoot();
 
+// Позволяет изменять громкость звуков и музыки с шагом 10 единиц.
+void changeVolume(int type, int side);
 
 int main(int argc, char* args[])
 {
@@ -416,6 +415,7 @@ void WallCollision()
     {
         ball.stepX = -ball.stepX;
         ball.posX += ball.stepX;
+        Mix_PlayChannel(-1, synthPop, 0);
     }
 }
 
@@ -697,12 +697,12 @@ void makeBACKGROUND()
 /*
     COLOR CODES
     0 = null
-    1 = earth
-    2 = saturn
-    3 = neptune
-    4 = venus
-    5 = jupiter
-    6 = mars
+    1 = red
+    2 = orange
+    3 = yellow
+    4 = green
+    5 = blue
+    6 = purple
 */
 
 /*
@@ -710,7 +710,7 @@ void makeBACKGROUND()
     1 = main menu
     2 = play
     3 = highscores
-    4 = credits
+    4 = settings
 */
 
 SDL_Surface* GetColor(int color)
@@ -877,9 +877,9 @@ void RefreshScreen()
         drawELEMENT(EGelement, 38, 38);
     }
 
-    /*Highscores Refresh Screen*/
+    /*Settings Refresh Screen*/
     if (interface == 4) {
-        drawELEMENT(CredElement, 300, 200);
+        drawELEMENT(SettingsElement, 440, 350);
         drawELEMENT(EGelement, 38, 38);
     }
 
@@ -922,12 +922,22 @@ void shoot() {
     ball.stepY *= MSPEED;
     ball.stepX *= MSPEED;
     clicked = 1;
+    Mix_PlayChannel(-1, shot, 0);
 }
 
 void Game() {
-
-    if (!Sound) Mix_VolumeMusic(0);
-    else Mix_VolumeMusic(100);
+    if (!Sound)
+    {
+        Mix_VolumeChunk(bubblePop, 0);
+        Mix_VolumeChunk(synthPop, 0);
+        Mix_VolumeMusic(0);
+    }
+    else 
+    { 
+        Mix_VolumeMusic(musicVolume); 
+        Mix_VolumeChunk(bubblePop, soundsVolume);
+        Mix_VolumeChunk(synthPop, soundsVolume);
+    }
 
     switch (interface) {
     case 1: /*Main Menu*/
@@ -939,8 +949,8 @@ void Game() {
     case 3: /*Highscores*/
         Highscores();
         break;
-    case 4: /*Credits*/
-        Credits();
+    case 4: /*Settings*/
+        Settings();
         break;
     }
     RefreshScreen();
@@ -959,8 +969,11 @@ void MainMenu() {
         case SDL_KEYDOWN:
             if (e.key.keysym.sym == SDLK_ESCAPE)
                 quit = true;
-            else if (e.key.keysym.sym == SDLK_F9)
-                GetInput(e);
+            else if (e.key.keysym.sym == SDLK_KP_MINUS)
+                changeVolume('m', '-');
+            else if (e.key.keysym.sym == SDLK_KP_PLUS)
+                changeVolume('m', '+');
+
             break;
         }
     }
@@ -984,7 +997,7 @@ void Highscores() {
     }
 }
 
-void Credits() {
+void Settings() {
     SDL_Event e;
 
     while (SDL_PollEvent(&e) != 0)
@@ -1002,11 +1015,44 @@ void Credits() {
     }
 }
 
+void changeVolume(int type, int side) {
+    /*
+    type == 's': громкость звуков
+    type == 'm': громкость музыки
+    
+    side == '+': добавить 10 процентов громкости
+    side == '-': вычесть 10 процентов громкости 
+    */
+
+    switch (type)
+    {
+    case 's':
+        if      (side == '+' && soundsVolume < 100) soundsVolume += 10;
+        else if (side == '-' && soundsVolume > 0) soundsVolume -= 10;
+    case 'm':
+        if      (side == '+' && musicVolume < 100) musicVolume += 10;
+        else if (side == '-' && musicVolume > 0) musicVolume -= 10;
+    default:
+        break;
+    }
+
+    Mix_VolumeChunk(bubblePop, soundsVolume);
+    Mix_VolumeChunk(synthPop, soundsVolume);
+    Mix_VolumeMusic(musicVolume);
+
+}
+
 void Buttons(SDL_Event e) {
     int Mx, My;
     int ballcolor;
 
-
+    /*
+    Коды интерфейсов
+    1 = главное меню
+    2 = игра
+    3 = таблица рекордов
+    4 = настройки
+    */
 
     SDL_GetMouseState(&Mx, &My);
 
@@ -1204,7 +1250,7 @@ void Buttons(SDL_Event e) {
                 interface = 3;
                 ThreatLevel = 1;
                 makeBACKGROUND();
-                /*printf("%d\n", ThreatLevel);*/
+                /*printf("%d\n", ThreatLevel);//*/
                 play = 0;
             }
         }
@@ -1322,12 +1368,20 @@ int init() {
                 success = false;
 
             /* Load our sound effect */
-            wave = Mix_LoadWAV(WAV_PATH);
-            if (wave == NULL)
+            bubblePop = Mix_LoadWAV(bubblePop_path);
+            if (bubblePop == NULL)
+                success = false;
+
+            synthPop = Mix_LoadWAV(synthPop_path);
+            if (synthPop == NULL)
+                success = false;
+
+            shot = Mix_LoadWAV(shot_path);
+            if (shot == NULL)
                 success = false;
 
             /* Load our music */
-            music = Mix_LoadMUS(MUS_PATH);
+            music = Mix_LoadMUS(music_path);
             if (music == NULL)
                 success = false;
 
@@ -1452,7 +1506,7 @@ int PrepareGame()
 
     interface = 1;
     /*####*/
-    Sound = false;
+    Sound = true;
 
     /*Create Background*/
     makeBACKGROUND();
@@ -1533,11 +1587,11 @@ int PrepareGame()
         0,
         NULL);
 
-    CredElement = createELEMENT(
-        SCREEN_WIDTH / 2 - 150,
-        SCREEN_HEIGHT / 2 - 100,
+    SettingsElement = createELEMENT(
+        SCREEN_WIDTH / 2 - 220,
+        SCREEN_HEIGHT / 2 - 220,
         0,
-        loadSurface(credits));
+        loadSurface(settings));
 
     RankElement = createELEMENT(
         SCREEN_WIDTH / 2 - 220,
@@ -1579,11 +1633,10 @@ void renderLeaderboard() {
     scoreRect.h = 38;
 
     char scoreString[16];
-    font = TTF_OpenFont(TTF_PATH, 27);
-    shadow = TTF_OpenFont(TTF_PATH, 27);
+    font = TTF_OpenFont(font_path, 27);
+    shadow = TTF_OpenFont(font_path, 27);
 
     TTF_SetFontOutline(shadow, 1);
-
     
     for (int i = 0; i < 8; i++)
     {
@@ -1596,8 +1649,6 @@ void renderLeaderboard() {
         SDL_FreeSurface(fontSurface);
         scoreRect.y += 33;
     }
-
-    
 
     TTF_CloseFont(font);
     TTF_CloseFont(shadow);
@@ -1931,6 +1982,8 @@ void DestroyIsland(int ScoreOn) {
         for (j = 1; j < GRIDX; j++) {
             if (ballgrid[i][j].remain) {
                 ballgrid[i][j].remain = 0;
+
+
             }
             else {
                 if (ballgrid[i][j].color) {
@@ -1945,9 +1998,12 @@ void DestroyIsland(int ScoreOn) {
                 ballgrid[i][j].centerX = 0;
                 ballgrid[i][j].centerY = 0;
                 ballgrid[i][j].color = 0;
+
+
                 /*SDL_FreeSurface(ballgrid[i][j].image);*/
             }
         }
+    Mix_PlayChannel(-1, bubblePop, 0);
     /*printGrid();*/
 }
 
@@ -2022,8 +2078,8 @@ void GetScore() {
     char scoreString[16];
 
     /* Load TTF font */
-    font = TTF_OpenFont(TTF_PATH, 24);
-    shadow = TTF_OpenFont(TTF_PATH, 24);
+    font = TTF_OpenFont(font_path, 24);
+    shadow = TTF_OpenFont(font_path, 24);
 
     if (font == NULL)
         exit(748);
@@ -2120,7 +2176,7 @@ void GetInput(SDL_Event e) {
     printf("%s\n", NickString);
 
     /* Load TTF font */
-    font = TTF_OpenFont(TTF_PATH, 20);
+    font = TTF_OpenFont(font_path, 20);
     if (font == NULL)
         exit(748);
 

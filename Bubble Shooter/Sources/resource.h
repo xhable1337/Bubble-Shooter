@@ -2,15 +2,29 @@
 #include <SDL.h>
 #include <SDL_image.h>
 
+//// Шрифт
+// Acrobat Bold
+extern char* font_path;
+
+//// Звуки
+// Фоновая музыка
+extern char* music_path;
+// Звук лопающегося пузыря (для взрыва островов)
+extern char* bubblePop_path;
+// Звук синтезаторного пузыря (для отскока от стен)
+extern char* synthPop_path;
+// Звук шипения (для выстрела шариком)
+extern char* shot_path;
+
 //// Файл сохранения таблицы рекордов
 extern char* leaderboardPath;
 
 //// Ассеты для меню
-extern char* menuBG;              // Фон для меню
-extern char* menuBG2;             // Фон в пунктах меню
-extern char* arrow;               // Стрелка для меню
-extern char* topPlayers;          // Таблица рекордов
-extern char* credits;             // Экран информации
+extern char* menuBG;               // Фон для меню
+extern char* menuBG2;              // Фон в пунктах меню
+extern char* arrow;                // Стрелка для меню
+extern char* topPlayers;           // Таблица рекордов
+extern char* settings;             // Экран информации
 
 //// Внутриигровые ассеты интерфейса
 // Фон

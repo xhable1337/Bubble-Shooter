@@ -1,6 +1,20 @@
 ﻿#include <SDL.h>
 #include <SDL_image.h>
 
+//// Шрифт
+// Acrobat Bold
+char* font_path = "./TTF/font.ttf";
+
+//// Звуки
+// Фоновая музыка
+char* music_path = "./Sounds/n1ghtliner - slighty observer.mp3";
+// Звук лопающегося пузыря (для взрыва островов)
+char* bubblePop_path = "./Sounds/bubblePop.wav";
+// Звук синтезаторного пузыря (для отскока от стен)
+char* synthPop_path = "./Sounds/synthPop.wav";
+// Звук шипения (для выстрела шариком)
+char* shot_path = "./Sounds/shot.mp3";
+
 //// Файл сохранения таблицы рекордов
 char* leaderboardPath = "./Misc/leaderboard.txt";
 
@@ -9,7 +23,7 @@ char* menuBG = "./Images/menuBG.png";                           // Фон для
 char* menuBG2 = "./Images/skyMenuBG640x480.png";                // Фон в пунктах меню
 char* arrow = "./Images/menuButtonHover.png";                   // Стрелка для меню
 char* topPlayers = "./Images/topPlayers.png";                   // Таблица рекордов
-char* credits = "./Images/credits.png";                         // Экран информации
+char* settings = "./Images/settings.png";                       // Экран информации
 
 //// Внутриигровые ассеты интерфейса	
 // Фон
@@ -123,7 +137,7 @@ void resourceInit() {
         mBG2 = load(menuBG2);
         arr = load(arrow);
         tP = load(topPlayers);
-        creds = load(credits);
+        creds = load(settings);
     }
 
     // Загрузка фона
@@ -204,7 +218,7 @@ SDL_Surface* requestSurface(char* path) {
     else if (path == menuBG2) return mBG2;
     else if (path == arrow) return arr;
     else if (path == topPlayers) return tP;
-    else if (path == credits) return creds;
+    else if (path == settings) return creds;
     
     // Возврат шариков
     else if (path == color1) return c1;
