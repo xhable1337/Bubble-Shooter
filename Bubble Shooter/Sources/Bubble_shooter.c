@@ -339,6 +339,9 @@ void shoot();
 // Позволяет изменять громкость звуков и музыки с шагом 10 единиц.
 void changeVolume(int type, int side);
 
+// Выводит текущую громкость музыки и звуков на экран.
+void renderVolume();
+
 int main(int argc, char* args[])
 {
     int errortest;
@@ -881,6 +884,7 @@ void RefreshScreen()
     if (interface == 4) {
         drawELEMENT(SettingsElement, 440, 350);
         drawELEMENT(EGelement, 38, 38);
+        renderVolume();
     }
 
     /*Update the surface*/
@@ -1029,15 +1033,18 @@ void changeVolume(int type, int side) {
     case 's':
         if      (side == '+' && soundsVolume < 100) soundsVolume += 10;
         else if (side == '-' && soundsVolume > 0) soundsVolume -= 10;
+        break;
     case 'm':
         if      (side == '+' && musicVolume < 100) musicVolume += 10;
         else if (side == '-' && musicVolume > 0) musicVolume -= 10;
+        break;
     default:
         break;
     }
 
     Mix_VolumeChunk(bubblePop, soundsVolume);
     Mix_VolumeChunk(synthPop, soundsVolume);
+    Mix_VolumeChunk(shot, soundsVolume);
     Mix_VolumeMusic(musicVolume);
 
 }
@@ -1117,6 +1124,58 @@ void Buttons(SDL_Event e) {
         }
 
 
+    }
+
+    /*
+    Координаты кнопок
+    Формат:
+    Левый верхний угол x y || Правый нижний угол x y
+    -------------------------------------------------
+    Music  -: 190 160 || 217 186
+    Music  +: 426 160 || 454 186
+    Sounds -: 190 212 || 217 240
+    Sounds +: 426 212 || 454 240
+    */
+
+    if (interface == 4)
+    {
+        printf(
+            "-------------------\n"
+            "Mx: %3d |+| My: %3d\n", Mx, My);
+        //printf("");
+        
+        if (e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_LEFT)
+        {
+            if (Mx > 426 && Mx < 454) // Кнопки «+»
+            {
+                if (My > 160 && My < 186) // Музыка +
+                {
+                    changeVolume('m', '+');
+                    printf("Music + 10 = %d\%.\n", musicVolume);
+                }
+                else if (My > 212 && My < 240) // Звуки +
+                {
+                    changeVolume('s', '+');
+                    printf("Sounds + 10 = %d\%.\n", soundsVolume);
+
+                }
+            }
+            else if (Mx > 190 && Mx < 228) // Кнопки «-»
+            {
+                if (My > 160 && My < 186) // Музыка -
+                {
+                    changeVolume('m', '-');
+                    printf("Music - 10 = %d\%.\n", musicVolume);
+                }
+                else if (My > 212 && My < 240) // Звуки -
+                {
+                    changeVolume('s', '-');
+                    printf("Sounds - 10 = %d\%.\n", soundsVolume);
+
+                }
+            }
+
+        }
     }
 
     if ((interface == 2 || interface == 3 || interface == 4)) {
@@ -1332,8 +1391,8 @@ int init() {
     }
     else
     {
-        /*Create window*/ /*##Trocar o nome*/
-        gWindow = SDL_CreateWindow("Omega Shooter", SDL_WINDOWPOS_UNDEFINED,
+        /*Create window*/ 
+        gWindow = SDL_CreateWindow("Bubble Shooter | Ilyushina Darya", SDL_WINDOWPOS_UNDEFINED,
             SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
         if (gWindow == NULL)
         {
@@ -1614,6 +1673,45 @@ void PreparePlay() {
     ball.image = GetColor(ball.color);
     nextball.image = GetColor(nextball.color);
     play = 1;
+}
+
+void renderVolume() {
+    SDL_Surface* fontSurface;
+    TTF_Font* font;
+    SDL_Color fontColor = { 52,152,219 };
+
+    SDL_Surface* shadowSurface;
+    TTF_Font* shadow;
+    SDL_Color shadowColor = { 0,0,0 };
+
+    SDL_Rect scoreRect;
+
+    scoreRect.x = SCREEN_WIDTH / 2 + 50;
+    scoreRect.y = 153;
+    scoreRect.w = 100;
+    scoreRect.h = 38;
+
+    int volumes[2] = { musicVolume, soundsVolume };
+    char volumeString[16];
+    font = TTF_OpenFont(font_path, 27);
+    shadow = TTF_OpenFont(font_path, 27);
+
+    TTF_SetFontOutline(shadow, 1);
+
+    for (int i = 0; i < 2; i++)
+    {
+        sprintf(volumeString, u8"%d%%", volumes[i]);
+        shadowSurface = TTF_RenderUTF8_Blended(shadow, volumeString, shadowColor);
+        fontSurface = TTF_RenderUTF8_Blended(font, volumeString, fontColor);
+        SDL_BlitSurface(shadowSurface, NULL, gScreenSurface, &scoreRect);
+        SDL_BlitSurface(fontSurface, NULL, gScreenSurface, &scoreRect);
+        SDL_FreeSurface(shadowSurface);
+        SDL_FreeSurface(fontSurface);
+        scoreRect.y += 55;
+    }
+
+    TTF_CloseFont(font);
+    TTF_CloseFont(shadow);
 }
 
 void renderLeaderboard() {
