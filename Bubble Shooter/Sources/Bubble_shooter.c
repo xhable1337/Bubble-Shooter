@@ -5,7 +5,6 @@ Designed & developed by @xhable
 Repo link: https://github.com/xhable1337/Bubble-Shooter
  */
 
- /*Using SDL, SDL_image, standard IO, and strings*/
 #define _CRT_SECURE_NO_WARNINGS
 #include <SDL.h>
 #include <SDL_image.h>
@@ -16,51 +15,47 @@ Repo link: https://github.com/xhable1337/Bubble-Shooter
 #include <time.h>
 #include <math.h>
 #include <stdlib.h>
-
 #include "resource.h"
 #include "leaderboard.h"
 
 #define DELAY 5
 
-/*
- * Constants
- */
+// --- Константы
 
- /*Screen dimension constants*/
+// Константы разрешения экрана
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
 
-/*Border Width*/
+// Ширина границы
 const int BORDER = 24;
 
-/*Ball moving speed*/
+// Скорость передвижения шарика
 const int MSPEED = 8;
 
-/*Ball collision radius*/
+// Радиус коллизии шарика
 const int COLRADIUS = 8;
 
-/*Amount of different colors for the balls*/
+// Количество возможных цветов шариков
 const int COLORS = 6;
 
-/*Ballgrid size*/
+// Размеры сетки
 const int BALLX = 20;
 const int BALLY = 20;
 
-/*Initial ballgrid*/
+// Инициализация сетки
 const int GRIDX = 19;
 const int GRIDY = 6;
 
-/*(true/false)*/
+// true/false значения для удобства работы с условиями
 const int false = 0;
 const int true = 1;
 
-/*Image size constants*/
+// Разрешение текстуры шариков
 const int IMAGE_WIDTH = 32;
 const int IMAGE_HEIGHT = 32;
 
-int a = 1;
+// Массив таблицы рекордов
 int leaderboard[8];
-
 
 typedef struct _BACKGROUND
 {
@@ -108,9 +103,7 @@ typedef struct _UIELEMENT
     SDL_Surface* image;
 } UIELEMENT;
 
-/*
- * Global Variables
- */
+// --- Глобальные переменные
 
 int clicked = 0;
 int play = 0;
@@ -123,249 +116,241 @@ int musicVolume = 100;
 int soundsVolume = 100;
 char NickString[16];
 
-/*The window we'll be rendering to*/
 SDL_Window* gWindow = NULL;
 
-/* Our wave files */
 Mix_Music* bubblePop = NULL;
 Mix_Music* synthPop = NULL;
 Mix_Music* shot = NULL;
-
-/* Our music file */
 Mix_Music* music = NULL;
 
-/*The image character*/
+// Элемент-игрок
 PLAYER ball;
 
-/*The next ball color*/
+// Следующий шарик
 UIELEMENT nextball;
 
-/*Life elements*/
+// Элементы жизней
 UIELEMENT lifeballs[5];
 
-/*Sound on/off element*/
+// Элемент звука (вкл/выкл)
 UIELEMENT SoundElement;
 
-/*End Game element*/
+// Элемент завершения игры
 UIELEMENT EGelement;
 
-/*Main Menu Arrow*/
-UIELEMENT ArrowElement;
+// Эффект при наведении на кнопки главного меню
+UIELEMENT MenuHoverElement;
 
-/*PlayMode UI*/
+// Внутриигровой UI
 UIELEMENT PMUI;
 
-/*EndGame UI*/
+// UI при завершении игры (endGameUI)
 UIELEMENT EGUI;
 
-/*EndGame Sound*/
+// Кнопка перезапуска игры (endGameUI)
 UIELEMENT EGR;
 
-/*EndGame MainMenu*/
+// Кнопка возврата в главное меню (endGameUI)
 UIELEMENT EGMen;
 
-/*EndGame Ranking*/
+// Кнопка перехода к таблице рекордов (endGameUI)
 UIELEMENT EGRank;
 
-/*Settings UI*/
+// Меню настроек
 UIELEMENT SettingsElement;
 
-/*Ranking UI*/
+// Таблица рекордов
 UIELEMENT RankElement;
 
-/*Ball Grid [Y][X]*/
+// Сетка шариков [x][y]
 NPC ballgrid[20][20];
 
 int ballCount = 0;
 int currentCount = 0;
 
+// Уровень угрозы в игре
 int ThreatLevel = 1;
 
-/*interfaces*/
+/*
+    Коды интерфейсов
+    1 = главное меню
+    2 = игра
+    3 = таблица рекордов
+    4 = настройки
+*/
 int interface;
 
-/*Ball surface*/
 SDL_Surface* BallSurface;
-
-/*The surface contained by the window*/
 SDL_Surface* gScreenSurface = NULL;
-
-/*Background*/
 BACKGROUND backg;
-
-/*Keeps the NPC where the check started*/
 NPC* destructionStart = NULL;
 
-/*
- * function prototypes
- */
+// --- Прототипы функций
 
- /*Starts up SDL and creates window*/
+// Запускает все подсистемы SDL и создаёт окно
 int init();
 
+// Отрисовывает таблицу рекордов в соответствующем пункте меню
 void renderLeaderboard();
 
-/*Loads media*/
+// Загружает шарики в память
 int loadMedia();
 
 int getstring = 1;
 
-/*Frees media and shuts down SDL*/
+// Выгружает ресурсы из памяти и закрывает программу
 void closing();
 
-/*Loads individual image*/
+// Возвращает SDL_Surface с игровыми ассетами. Если не загружены, сначала их загружает в память.
 SDL_Surface* loadSurface(char* path);
 
-/*Create PLAYER*/
+// Создаёт «игрока» - PLAYER
 PLAYER createPLAYER(float posX, float posY, float stepX, float stepY, int color, SDL_Surface* image);
 
-/*Create NPC*/
+// Создаёт NPC - неиграбельные шарики
 NPC createNPC(float posY, float posX, int indexY, int indexX, int color, SDL_Surface* image);
 
-/*Create UI element*/
+// Создаёт UI элемент
 UIELEMENT createELEMENT(float posX, float posY, int color, SDL_Surface* image);
 
-/*Move PLAYER*/
+// Передвигает шар-«игрока»
 void movePLAYER();
 
-/*Gets ball color*/
-SDL_Surface* GetColor(int color);
+// Возвращает SDL_Surface шарика цвета color
+SDL_Surface* getBallColor(int color);
 
-/*Gets Player Score*/
-void GetScore();
+// Отрисовывает количество очков
+void drawScore();
 
-/*Gets player nick string*/
-void GetInput(SDL_Event e);
+// Меняет цвет интерфейса, основываясь на уровне угрозы
+void changeUI();
 
-/*Gets Threat Level*/
-void GetThreatLevel();
+// Меняет цвет жизней
+void changeLifes();
 
-/*Gets Life Surface*/
-void GetLifeSurface();
-
-/*checks ball collision*/
+// Проверяет коллизию с NPC
 NPC* checkCollision();
 
-/*checks ball collision against the wall*/
+// Проверяет коллизию со стенами
 void WallCollision();
 
-/*checks ball collision  against the ceiling*/
+// Проверяет коллизию с потолком
 NPC* CeilingCollision();
 
-/*checks ball collision against an NPC*/
+// Проверяет коллизию с NPC
 NPC* NPCCollision();
 
-/*calls NPC and Ceiling Collision*/
+// Проверяет все типы коллизий NPC
 NPC* collision();
 
-/*Destroys the surrounding balls of the same color*/
+// Уничтожает стоящие рядом шарики одного цвета
 void checkAround(NPC* npc, int checkcolor);
 
-/*Checks if there are enough balls to trigger destruction*/
+// Проверяет, достаточно ли шариков для вызова функции их уничтожения
 void checkDestruction(NPC* npc, int checkcolor);
 
-/*Turns npc->remain to 1*/
+// Проверяет игровое поле на наличие «островков»
 void checkIsland(NPC* npc);
 
-/*Destroys Islands*/
-void DestroyIsland(int ScoreOn);
+// Уничтожает «островки»
+void destroyIsland(int ScoreOn);
 
-/*Prepares game initialization and variables*/
+// Инициализирует переменные, необходимые для работы программы, и создает UI элементы
 int PrepareGame();
 
-/*Finishes play mode*/
-int PlayEnd();
+// Завершает игру
+int playEnd();
 
-/*Checks play mode win*/
-int PlayWin();
+// Проверяет выигрыш
+int playWin();
 
-/*Prints the screen surface and its updates*/
-void RefreshScreen(void);
+// Обновляет экран
+void RefreshScreen();
 
-/*Prints grid in the terminal*/
+// [Отладка] Выводит сетку шариков в консоль
 void printGrid();
 
-/*Moves the grid down when called*/
+// Сдвигает сетку шариков вниз
 void gridDown();
 
-/*Creates grid*/
+// Создаёт сетку шариков
 void createGrid(int ballY);
 
-/*Gets Background surface*/
+// Загружает фон, основываясь на коде интерфейса
 void makeBACKGROUND();
 
-/*Cleans grid*/
+// Очищает сетку шариков
 void cleanGrid();
 
-/*Displays player on screen*/
+// Отображает «игрока» на экране
 void drawPLAYER(PLAYER p);
 
-/*Displays NPC on screen*/
+// Отображает шарики-NPC
 void drawNPC(NPC n);
 
-/*Displays Background*/
+// Отображает фон
 void drawBACKGROUND(BACKGROUND b);
 
-/*Displayes UI element on screen*/
+// Отображает UI элемент на экране
 void drawELEMENT(UIELEMENT u, int imageW, int imageH);
 
-/*Game Function*/
+// Основная «входная» функция, которая обеспечивает менеджмент интерфейсов
 void Game();
 
-/*End Game UI Function*/
+// Загружает UI завершения игры
 void EndGameUI();
 
-/*Prepare play Function*/
+// Подготавливает и запускает игру
 void PreparePlay();
 
-/*Play mode Function*/
+// Основная игровая функция с логикой игры
 void Play();
 
-/*Main Menu Function*/
+// Функция обработки кнопок в главном меню
 void MainMenu();
 
-/*Highscores Function*/
+// Функция обработки кнопок на странице рекордов
 void Highscores();
 
-/*Settings Function*/
+// Функция обработки кнопок в меню настроек
 void Settings();
 
-/*Sound Button Function*/
+// Функция обработки экранных кнопок
 void Buttons(SDL_Event e);
 
-/*Shoot Ball Player*/
+// Выстреливает шариком в направлении курсора
 void shoot();
 
-// Позволяет изменять громкость звуков и музыки с шагом 10 единиц.
+// Позволяет изменять громкость звуков и музыки с шагом 10 единиц
 void changeVolume(int type, int side);
 
-// Выводит текущую громкость музыки и звуков на экран.
+// Отрисовывает уровни громкости в меню настроек
 void renderVolume();
+
+// =======================================================================
 
 int main(int argc, char* args[])
 {
-    int errortest;
+    int error;
 
-    /*Prepares game initialization and variables*/
-    errortest = PrepareGame();
+    // Подготовка к игре
+    error = PrepareGame();
 
-    if (errortest)
-    {
-        return errortest;
-    }
+    // Выход при обнаружении ошибок на стадии подготовки
+    if (error) return error;
 
+    // Запуск музыки
     Mix_PlayMusic(music, -1);
 
-    /*While application is running*/
-    while (!quit)
-    {
-        Game();
-    }
+    // Основной цикл игры
+    while (!quit) Game();
 
-    /*Free resources and closing SDL*/
+    // Освобождение памяти, завершение работы подсистем SDL и всей программы
     closing();
+
     return 0;
 }
+
 
 void movePLAYER()
 {
@@ -374,39 +359,29 @@ void movePLAYER()
     ball.centerX = ball.posX + IMAGE_WIDTH / 2;
     ball.centerY = ball.posY + IMAGE_HEIGHT / 2;
 
-    /*Checks if there's any wall collision for it inside the function*/
+    // Проверка коллизии со стеной
     WallCollision();
 
 }
 
 NPC* collision()
 {
-    /*char scoreString[16];*/
     NPC* n;
 
-    /*Checks if there's any NPC collision for it inside the function*/
+    // Проверка на коллизию NPC
     n = NPCCollision();
 
-    /*Checks if there's any ceiling collision for it inside the function*/
-    if (n == NULL)
-        n = CeilingCollision();
-    else {
-        /*printGrid();*/
+    // Проверка на коллизию с потолком
+    if (n == NULL) n = CeilingCollision();
+    else 
+    {
         ball.posX = (SCREEN_WIDTH / 2 - IMAGE_WIDTH / 2) + 1;
         ball.posY = (SCREEN_HEIGHT - IMAGE_HEIGHT) - 5;
         ball.stepY = 0;
         ball.stepX = 0;
         clicked = 0;
         health--;
-        /*#printGrid();#*/
-        GetThreatLevel();
-        GetLifeSurface();
-
-        if (PlayWin()) {
-            /*printf("\nnão fez mais que a sua obrigação\n");*/
-        }
-
-        /*printf("Score = %d\nThreatLevel = %d\n", Score, ThreatLevel);*/
+        changeUI();
     }
     return n;
 }
@@ -452,7 +427,7 @@ NPC* CeilingCollision()
         ball.image = nextball.image;
         ballcolor = rand() % COLORS + 1;
         nextball.color = ballcolor;
-        nextball.image = GetColor(ballcolor);
+        nextball.image = getBallColor(ballcolor);
 
         return &ballgrid[0][newX];
     }
@@ -479,17 +454,12 @@ NPC* checkCollision()
 
                 if (dist < IMAGE_WIDTH - COLRADIUS)
                 {
-                    /*if(ball.color == ballgrid[i][j].color){*/
-
-                    /* printf("Ball color: %d\nBall Index: %d\n",ballgrid[i][j].color,j); */
-
-                    /* printf("ballgrid centerY = %f\nplayer centerY = %f\n", ballgrid[i][j].centerY, ball.centerY);*/
-                      /*
-                        COLTYPE CODES:
-                             6 1
-                            5 O 2
-                             4 3
-                      */
+                    /*
+                    Коды типов коллизии по сторонам (О - шарик в центре):
+                       6 1
+                      5 O 2
+                       4 3
+                    */
                     if (ball.centerX > ballgrid[i][j].centerX)
                     {
                         if (ball.centerY < IMAGE_HEIGHT / 5 + ballgrid[i][j].posY) ballgrid[i][j].coltype = 1;
@@ -503,9 +473,6 @@ NPC* checkCollision()
                         else if (ball.centerY > (IMAGE_HEIGHT / 3) * 2 + ballgrid[i][j].posY + 1) ballgrid[i][j].coltype = 4;
                         else ballgrid[i][j].coltype = 5;
                     }
-
-                    /* printf("coltype = %d\n", ballgrid[i][j].coltype); */
-                    /* printf("player center: %f ballij center: %f\n", ball.centerX, ballgrid[i][j].centerX); */
                     return &ballgrid[i][j];
                 }
             }
@@ -516,14 +483,14 @@ NPC* checkCollision()
 
 NPC* NPCCollision()
 {
-    int m, n; /* m = index added to NPC i ; n = index added to NPC j */
+    int m, n;
     int ballcolor;
     NPC* colNPC, * newNPC;
 
     colNPC = checkCollision();
 
     /*
-      COLTYPE CODES:
+    Коды типов коллизии по сторонам (О - шарик в центре):
            6 1
           5 O 2
            4 3
@@ -531,7 +498,7 @@ NPC* NPCCollision()
 
     if (colNPC)
     {
-        /*printf("Colidiu!\n");*/
+        // Коллизия есть!
         switch (colNPC->coltype)
         {
         case 1:
@@ -583,7 +550,7 @@ NPC* NPCCollision()
             }
         }
 
-        /*(making newNPC)*/
+        // Создаём новый NPC
         ballgrid[(colNPC->indexY) + m][(colNPC->indexX) + n] = createNPC(
             ((colNPC->indexY) + m) * (IMAGE_HEIGHT - 5),
             (colNPC->indexX) * IMAGE_WIDTH,
@@ -593,11 +560,10 @@ NPC* NPCCollision()
             ball.image
         );
         newNPC = &ballgrid[(colNPC->indexY) + m][(colNPC->indexX) + n];
-        /*from now on, newNPC can use this pointer*/
 
         ball.image = NULL;
 
-        /*repositioning*/
+        // Передвигаем NPC
         if (colNPC->coltype <= 3)
             newNPC->posX += IMAGE_WIDTH / 2;
         if ((colNPC->coltype == 2 || colNPC->coltype == 5) && ((colNPC->indexY) % 2 == 1))
@@ -613,7 +579,7 @@ NPC* NPCCollision()
         newNPC->centerX = newNPC->posX + IMAGE_WIDTH / 2;
         newNPC->centerY = newNPC->posY + IMAGE_WIDTH / 2;
 
-        /*Checking if there's a ball over the border*/
+        // Проверка на выход шарика за пределы игрового поля
         if (newNPC->posX < IMAGE_WIDTH && (newNPC->indexY) % 2 == 1) {
             newNPC->posX += IMAGE_WIDTH / 2;
         }
@@ -630,14 +596,13 @@ NPC* NPCCollision()
         ball.image = nextball.image;
         ballcolor = rand() % COLORS + 1;
         nextball.color = ballcolor;
-        nextball.image = GetColor(ballcolor);
+        nextball.image = getBallColor(ballcolor);
 
         return newNPC;
     }
     return NULL;
 }
 
-/*Create UI element*/
 UIELEMENT createELEMENT(float posX, float posY, int color, SDL_Surface* image)
 {
     UIELEMENT u;
@@ -649,7 +614,6 @@ UIELEMENT createELEMENT(float posX, float posY, int color, SDL_Surface* image)
     return u;
 }
 
-/*Create PLAYER*/
 PLAYER createPLAYER(float posX, float posY,
     float stepX, float stepY,
     int color, SDL_Surface* image)
@@ -667,7 +631,6 @@ PLAYER createPLAYER(float posX, float posY,
     return p;
 }
 
-/*Create NPC*/
 NPC createNPC(float posY, float posX,
     int indexY, int indexX,
     int color, SDL_Surface* image)
@@ -689,7 +652,6 @@ NPC createNPC(float posY, float posX,
 
 }
 
-/*makes BACKGROUND*/
 void makeBACKGROUND()
 {
     if (interface == 1) backg.image = loadSurface(menuBG);
@@ -697,8 +659,10 @@ void makeBACKGROUND()
     if (interface == 3 || interface == 4) backg.image = loadSurface(menuBG2);
 }
 
-/*
-    COLOR CODES
+SDL_Surface* getBallColor(int color)
+{
+    /*
+    Коды цветов шариков
     0 = null
     1 = red
     2 = orange
@@ -706,52 +670,21 @@ void makeBACKGROUND()
     4 = green
     5 = blue
     6 = purple
-*/
-
-/*
-    INTERFACE CODES
-    1 = main menu
-    2 = play
-    3 = highscores
-    4 = settings
-*/
-
-SDL_Surface* GetColor(int color)
-{
-    SDL_Surface* ColorSurface = NULL;
+    */
 
     switch (color)
     {
-    case 1:
-        ColorSurface = loadSurface(color1);
-        //ColorSurface = ballRequest(color1);
-        break;
-    case 2:
-        ColorSurface = loadSurface(color2);
-        //ColorSurface = ballRequest(color2);
-        break;
-    case 3:
-        ColorSurface = loadSurface(color3);
-        //ColorSurface = ballRequest(color3);
-        break;
-    case 4:
-        ColorSurface = loadSurface(color4);
-        //ColorSurface = ballRequest(color4);
-        break;
-    case 5:
-        ColorSurface = loadSurface(color5);
-        //ColorSurface = ballRequest(color5);
-        break;
-    case 6:
-        ColorSurface = loadSurface(color6);
-        //ColorSurface = ballRequest(color6);
-        break;
+    case 1: return loadSurface(color1);
+    case 2: return loadSurface(color2);
+    case 3: return loadSurface(color3);
+    case 4: return loadSurface(color4);
+    case 5: return loadSurface(color5);
+    case 6: return loadSurface(color6);
     }
-
-    return ColorSurface;
+    
+    return NULL;
 }
 
-/*Clean Grid*/
 void cleanGrid() {
     int i, j;
 
@@ -768,7 +701,6 @@ void cleanGrid() {
     }
 }
 
-/*Create Grid*/
 void createGrid(int ballY)
 {
     int i;
@@ -782,7 +714,6 @@ void createGrid(int ballY)
     }
 }
 
-/*Displays player on screen*/
 void drawPLAYER(PLAYER p)
 {
     SDL_Rect srcRect, dstRect;
@@ -795,7 +726,6 @@ void drawPLAYER(PLAYER p)
     SDL_BlitSurface(p.image, &srcRect, gScreenSurface, &dstRect);
 }
 
-/*Displayes Background on screen*/
 void drawBACKGROUND(BACKGROUND b)
 {
     SDL_Rect srcRect, dstRect;
@@ -808,7 +738,6 @@ void drawBACKGROUND(BACKGROUND b)
     SDL_BlitSurface(b.image, &srcRect, gScreenSurface, &dstRect);
 }
 
-/*Displayes UI element on screen*/
 void drawELEMENT(UIELEMENT u, int imageW, int imageH)
 {
     SDL_Rect srcRect, dstRect;
@@ -821,7 +750,6 @@ void drawELEMENT(UIELEMENT u, int imageW, int imageH)
     SDL_BlitSurface(u.image, &srcRect, gScreenSurface, &dstRect);
 }
 
-/*Displays NPC on screen*/
 void drawNPC(NPC n)
 {
     if (n.color)
@@ -844,12 +772,12 @@ void RefreshScreen()
     /*Main Menu Refresh Screen*/
     if (interface == 1) {
         drawELEMENT(SoundElement, 38, 38);
-        drawELEMENT(ArrowElement, 210, 73);
+        drawELEMENT(MenuHoverElement, 210, 73);
     }
 
     /*Play Refresh Screen*/
     if (interface == 2) {
-        GetScore();
+        drawScore();
         drawELEMENT(PMUI, SCREEN_WIDTH, SCREEN_HEIGHT);
         drawPLAYER(ball);
         drawELEMENT(SoundElement, 38, 38);
@@ -868,7 +796,7 @@ void RefreshScreen()
             drawELEMENT(EGMen, 38, 38);
             drawELEMENT(EGR, 38, 38);
             drawELEMENT(EGRank, 38, 38);
-            GetScore();
+            drawScore();
         }
 
     }
@@ -895,7 +823,6 @@ void RefreshScreen()
     /* Not so good solution, depends on your computer*/
     SDL_Delay(DELAY);
 }
-
 
 void shoot() {
     int Mx, My;
@@ -934,6 +861,7 @@ void Game() {
     {
         Mix_VolumeChunk(bubblePop, 0);
         Mix_VolumeChunk(synthPop, 0);
+        Mix_VolumeChunk(shot, 0);
         Mix_VolumeMusic(0);
     }
     else 
@@ -941,6 +869,7 @@ void Game() {
         Mix_VolumeMusic(musicVolume); 
         Mix_VolumeChunk(bubblePop, soundsVolume);
         Mix_VolumeChunk(synthPop, soundsVolume);
+        Mix_VolumeChunk(shot, soundsVolume);
     }
 
     switch (interface) {
@@ -1065,7 +994,7 @@ void Buttons(SDL_Event e) {
 
     // interface == 1: Главное меню
     if (interface == 1) {
-        /*Sound Element Button*/
+        // Кнопка звука (вкл/выкл)
         SoundElement.posX = 3;
         SoundElement.posY = (SCREEN_HEIGHT - 41) + 4;
         if (Mx < (41) && Mx >(3)
@@ -1086,37 +1015,37 @@ void Buttons(SDL_Event e) {
                 SoundElement.image = loadSurface(soundOffBlue);
         }
 
-        ArrowElement.posX = 56;
+        MenuHoverElement.posX = 56;
 
-        /*Main Menu Buttons*/
+        // Кнопки главного меню
         if (!(Mx > 70 && Mx < 250 && My > 210 && My < 359)) {
-            ArrowElement.image = NULL;
+            MenuHoverElement.image = NULL;
         }
         else if (Mx > 70 && Mx < 250) {
-            ArrowElement.image = loadSurface(arrow);
+            MenuHoverElement.image = loadSurface(arrow);
             if (My > 210 && My < 235) {
-                ArrowElement.posY = 184;
+                MenuHoverElement.posY = 184;
                 if (e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_LEFT) {
                     interface = 2;
                     makeBACKGROUND();
                 }
             }
             if (My > 250 && My < 275) {
-                ArrowElement.posY = 228;
+                MenuHoverElement.posY = 228;
                 if (e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_LEFT) {
                     interface = 3;
                     makeBACKGROUND();
                 }
             }
             if (My > 290 && My < 317) {
-                ArrowElement.posY = 269;
+                MenuHoverElement.posY = 269;
                 if (e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_LEFT) {
                     interface = 4;
                     makeBACKGROUND();
                 }
             }
             if (My > 332 && My < 359) {
-                ArrowElement.posY = 311;
+                MenuHoverElement.posY = 311;
                 if (e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_LEFT) {
                     quit = true;
                 }
@@ -1137,12 +1066,13 @@ void Buttons(SDL_Event e) {
     Sounds +: 426 212 || 454 240
     */
 
+    // interface == 4: Меню настроек
     if (interface == 4)
     {
-        printf(
+
+        /*printf(
             "-------------------\n"
-            "Mx: %3d |+| My: %3d\n", Mx, My);
-        //printf("");
+            "Mx: %3d |+| My: %3d\n", Mx, My);*/
         
         if (e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_LEFT)
         {
@@ -1178,11 +1108,12 @@ void Buttons(SDL_Event e) {
         }
     }
 
+
     if ((interface == 2 || interface == 3 || interface == 4)) {
         EGelement.posX = 577;
         EGelement.posY = (SCREEN_HEIGHT - 41) + 4;
-        /*End Game Button*/
-        if ((Mx < (SCREEN_WIDTH - 2 * IMAGE_WIDTH + 38) && Mx >(SCREEN_WIDTH - 2 * IMAGE_WIDTH - 2)
+
+        if ((Mx < (SCREEN_WIDTH - 2 * IMAGE_WIDTH + 38) && Mx > (SCREEN_WIDTH - 2 * IMAGE_WIDTH - 2)
             && My > (SCREEN_HEIGHT - 41) && My < (SCREEN_HEIGHT - 41 + 38))
             || (((Mx < 268) && (Mx > 238) && (My < 274) && (My > 238)) && (play == -1))) {
             if (e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_LEFT) {
@@ -1194,11 +1125,11 @@ void Buttons(SDL_Event e) {
                 ball.stepY = 0;
                 ballcolor = rand() % COLORS + 1;
                 ball.color = ballcolor;
-                ball.image = GetColor(ballcolor);
+                ball.image = getBallColor(ballcolor);
                 ballcolor = rand() % COLORS + 1;
-                nextball.image = GetColor(ballcolor);
+                nextball.image = getBallColor(ballcolor);
                 nextball.color = ballcolor;
-                ArrowElement.image = NULL;
+                MenuHoverElement.image = NULL;
                 ThreatLevel = 1;
 
                 cleanGrid();
@@ -1223,7 +1154,7 @@ void Buttons(SDL_Event e) {
             }
         }
 
-        /*Sound Element Button*/
+        // Кнопка звука (вкл/выкл)
         SoundElement.posX = 30;
         SoundElement.posY = (SCREEN_HEIGHT - 41) + 4;
         if (Mx < (66) && Mx >(28)
@@ -1264,7 +1195,7 @@ void Buttons(SDL_Event e) {
             }
         }
 
-        /*EGMen Button*/
+        // Кнопка возврата в главное меню
         if (Mx < (268) && Mx >(238)
             && My < (274) && My >(238)) {
             if (ThreatLevel == 3) EGMen.image = loadSurface(menuHoverRed);
@@ -1275,7 +1206,7 @@ void Buttons(SDL_Event e) {
             if (ThreatLevel == 1) EGMen.image = loadSurface(menuBlue);
         }
 
-        /*Replay Button*/
+        // Кнопка перезапуска игры
         if (Mx < (335) && Mx >(305)
             && My < (306) && My >(272)) {
             if (ThreatLevel == 3) EGR.image = loadSurface(returnHoverRed);
@@ -1286,7 +1217,6 @@ void Buttons(SDL_Event e) {
                 EGRank.image = NULL;
                 EGMen.image = NULL;
                 play = 0;
-                /*PreparePlay();*/
             }
         }
         else {
@@ -1294,9 +1224,6 @@ void Buttons(SDL_Event e) {
             if (ThreatLevel == 1) EGR.image = loadSurface(returnBlue);
         }
 
-        /*Ranking Button
-        372, 30
-        238, 34*/
         if (Mx < (402) && Mx >(372)
             && My < (274) && My >(238)) {
             if (ThreatLevel == 3) EGRank.image = loadSurface(rankHoverRed);
@@ -1309,7 +1236,6 @@ void Buttons(SDL_Event e) {
                 interface = 3;
                 ThreatLevel = 1;
                 makeBACKGROUND();
-                /*printf("%d\n", ThreatLevel);//*/
                 play = 0;
             }
         }
@@ -1339,10 +1265,6 @@ void Play() {
         {
             switch (e.key.keysym.sym)
             {
-            case SDLK_UP: /* printf("UP\n"); */
-                break;
-            case SDLK_DOWN: /*if(play == 1) gridDown();*/
-                break;
             case SDLK_ESCAPE: quit = true;
                 break;
             }
@@ -1354,7 +1276,6 @@ void Play() {
     {
         movePLAYER();
         collision();
-        /*checkAround(n);*/
     }
 
     if (maxhealth == 0) {
@@ -1365,25 +1286,18 @@ void Play() {
         gridDown();
         maxhealth--;
         health = maxhealth;
-        //printf("maxhealth: %d\n", maxhealth);
-        GetLifeSurface();
     }
 
-    if (PlayEnd() == 1) {
-        /*printf("\n\n\n\n\n\n\n\n\n\n\t\t\t\t   FRACASSADO\n\n\n\n\n\n\n\n\n\n\n\n\n");*/
-        /*interface = 1;*/
-        /*ThreatLevel = 1;*/
-        /*makeBACKGROUND();*/
-    }
+    playWin();
+    playEnd();
 }
 
 int init() {
-    /*Initialization flag*/
     int success = true;
 
     srand(time(NULL));
 
-    /*Initialize SDL*/
+    // Инициализация SDL
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
     {
         printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
@@ -1391,7 +1305,6 @@ int init() {
     }
     else
     {
-        /*Create window*/ 
         gWindow = SDL_CreateWindow("Bubble Shooter | Ilyushina Darya", SDL_WINDOWPOS_UNDEFINED,
             SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
         if (gWindow == NULL)
@@ -1402,7 +1315,6 @@ int init() {
 
         else
         {
-            /*Initialize JPG and PNG loading */
             int imgFlags = IMG_INIT_JPG | IMG_INIT_PNG;
             if (!(IMG_Init(imgFlags) & imgFlags))
             {
@@ -1412,21 +1324,20 @@ int init() {
 
             else
             {
-                /*Get window surface*/
                 gScreenSurface = SDL_GetWindowSurface(gWindow);
             }
 
-            /*Initialize TTF*/
+            // Инициализация SDL_ttf
             if (TTF_Init() == -1) {
                 printf("SDL could not initialize TTF! SDL Error: %s\n", SDL_GetError());
                 success = false;
             }
 
-            /*Initialize SDL_mixer */
+            // Инициализация SDL_mixer
             if (Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096) == -1)
                 success = false;
 
-            /* Load our sound effect */
+            // Загрузка звуковых эффектов
             bubblePop = Mix_LoadWAV(bubblePop_path);
             if (bubblePop == NULL)
                 success = false;
@@ -1439,26 +1350,19 @@ int init() {
             if (shot == NULL)
                 success = false;
 
-            /* Load our music */
+            // Загрузка музыки
             music = Mix_LoadMUS(music_path);
             if (music == NULL)
                 success = false;
-
-            /*surfaceMessage = TTF_RenderText_Solid(font, "000000000000", ttfColor);*/
-
         }
     }
-
-
 
     return success;
 }
 
 int loadMedia()
 {
-    /*Loading success flag*/
     int success = true;
-    /*uint32_t colorKey;*/
 
     if (BallSurface == NULL)
     {
@@ -1476,50 +1380,32 @@ int loadMedia()
 
 void closing()
 {
-    /*int i, j;*/
-    /*printf("entered closing\n");*/
     SDL_FreeSurface(gScreenSurface);
     gScreenSurface = NULL;
 
-
-    /*Free loaded image*/
     if (BallSurface != NULL)
         SDL_FreeSurface(BallSurface);
 
-    /*if (ball.image != NULL)
-        if (nextball.image != NULL)
-            SDL_FreeSurface(nextball.image);*/
-
     if (SoundElement.image != NULL)
         SDL_FreeSurface(SoundElement.image);
-    /*printf("freed soundelement surface\n");*/
 
     if (EGelement.image != NULL)
         SDL_FreeSurface(EGelement.image);
-    /*printf("freed EGelement surface\n");*/
 
     if (EGelement.image != NULL)
-        SDL_FreeSurface(ArrowElement.image);
-    /*printf("freed arrow element surface\n");*/
+        SDL_FreeSurface(MenuHoverElement.image);
 
     if (EGelement.image != NULL)
         SDL_FreeSurface(backg.image);
-    /*printf("freed bakcground image surface\n");*/
 
-    /*Destroy window*/
     SDL_DestroyWindow(gWindow);
     gWindow = NULL;
-    /*printf("freed gWindow\n");*/
 
-    /*Quit SDL subsystems*/
+    // Закрытие подсистем SDL
     IMG_Quit();
-    /*printf("quitted img\n");*/
     TTF_Quit();
-    /*printf("quitted ttf\n");*/
     Mix_Quit();
-    /*printf("quitted mix\n");*/
     SDL_Quit();
-    /*printf("quitted SDL\n");*/
 }
 
 SDL_Surface* loadSurface(char* path)
@@ -1541,7 +1427,6 @@ int PrepareGame()
     int ballcolor;
     int i;
 
-    /*Start up SDL and create window*/
     if (!init())
     {
         printf("Failed to initialize!\n");
@@ -1549,13 +1434,11 @@ int PrepareGame()
     }
 
     ballcolor = rand() % COLORS + 1;
-    BallSurface = GetColor(ballcolor);
+    BallSurface = getBallColor(ballcolor);
 
     resourceInit();
     leaderboardInit(&leaderboard);
     
-
-    /*Load media*/
     if (!loadMedia())
     {
         printf("Failed to load media!\n");
@@ -1567,28 +1450,26 @@ int PrepareGame()
     /*####*/
     Sound = true;
 
-    /*Create Background*/
     makeBACKGROUND();
 
-    /*Create PLAYER*/
-
+    // Создание «игрока»
     ball = createPLAYER(
         (SCREEN_WIDTH / 2 - IMAGE_WIDTH / 2) + 1,
         (SCREEN_HEIGHT - IMAGE_HEIGHT) - 5,
         0,
         0,
         ballcolor,
-        GetColor(ballcolor));
+        getBallColor(ballcolor));
 
-    /*Create nextball*/
+    // Создание следующего шарика
     ballcolor = rand() % COLORS + 1;
-    BallSurface = GetColor(ballcolor);
+    BallSurface = getBallColor(ballcolor);
 
     nextball = createELEMENT(
         135,
         (SCREEN_HEIGHT - IMAGE_HEIGHT) - 5,
         ballcolor,
-        GetColor(ballcolor));
+        getBallColor(ballcolor));
 
     for (i = 0; i < 5; i++) {
         lifeballs[i] = createELEMENT(
@@ -1610,7 +1491,7 @@ int PrepareGame()
         0,
         NULL);
 
-    ArrowElement = createELEMENT(
+    MenuHoverElement = createELEMENT(
         79,
         -38,
         0,
@@ -1662,16 +1543,16 @@ int PrepareGame()
 }
 
 void PreparePlay() {
-    /*Create Ball Grid*/
     maxhealth = 5;
     ThreatLevel = 1;
     health = maxhealth;
-    GetLifeSurface();
+    
+    changeLifes();
     Score = 0;
     clicked = 0;
     createGrid(GRIDY);
-    ball.image = GetColor(ball.color);
-    nextball.image = GetColor(nextball.color);
+    ball.image = getBallColor(ball.color);
+    nextball.image = getBallColor(nextball.color);
     play = 1;
 }
 
@@ -1752,7 +1633,7 @@ void renderLeaderboard() {
     TTF_CloseFont(shadow);
 }
 
-int PlayWin() {
+int playWin() {
     int i, j;
     for (i = 1, j = 0; j < BALLX; j++) {
         if (ballgrid[i][j].color) {
@@ -1769,7 +1650,7 @@ int PlayWin() {
     return 1;
 }
 
-int PlayEnd() {
+int playEnd() {
     int i, j, stop = false;
     for (i = 16, j = 0; j < BALLX; j++) {
         if (ballgrid[i][j].color) {
@@ -1816,17 +1697,15 @@ void gridDown()
         for (j = 1; j < GRIDX; j++)
         {
             if (ballgrid[i][j].color) {
-                /*SDL_FreeSurface(ballgrid[i][j].image);*/
                 ballgrid[i + 1][j] = createNPC(
                     (i + 1) * (IMAGE_HEIGHT - 5),
                     j * IMAGE_WIDTH + ((i + 1) % 2 * IMAGE_WIDTH / 2) - IMAGE_WIDTH / 4,
                     i + 1,
                     j,
                     ballgrid[i][j].color,
-                    GetColor(ballgrid[i][j].color)
+                    getBallColor(ballgrid[i][j].color)
                 );
                 ballgrid[i][j].color = 0;
-                /* printf("Ball Created\n"); */
                 drawNPC(ballgrid[i + 1][j]);
             }
         }
@@ -1835,7 +1714,7 @@ void gridDown()
     for (j = 1; j <= GRIDX; j++)
     {
         ballcolor = rand() % COLORS + 1;
-        BallSurface = GetColor(ballcolor);
+        BallSurface = getBallColor(ballcolor);
         ballgrid[1][j] = createNPC(
             1 * (IMAGE_HEIGHT - 5),
             j * IMAGE_WIDTH + (1 % 2 * IMAGE_WIDTH / 2) - IMAGE_WIDTH / 4,
@@ -1853,20 +1732,19 @@ void gridDown()
         }
 
     }
-    /*printGrid();*/
-    DestroyIsland(false);
-    GetThreatLevel();
-    GetLifeSurface();
+
+    destroyIsland(false);
+    changeUI();
+    changeLifes();
 }
 
 void checkIsland(NPC* npc)
 {
     int n;
     npc->remain = 1;
-    /* printf("AA\n"); */
 
     /*
-      COLTYPE CODES:
+      Коды типов коллизии:
            6 1
           5 O 2
            4 3
@@ -1876,36 +1754,35 @@ void checkIsland(NPC* npc)
 
     for (n = 0; n <= 1; n++) {
         if ((npc->indexY) % 2 == n) {
-            /*case 3*/
+            // Тип коллизии: 3
             if (ballgrid[(npc->indexY) + 1][(npc->indexX) + n].color && ballgrid[(npc->indexY) + 1][(npc->indexX) + n].remain == 0) {
                 checkIsland(&ballgrid[(npc->indexY) + 1][(npc->indexX) + n]);
             }
-            /*case 1*/
+            // Тип коллизии: 4
             if (ballgrid[(npc->indexY) - 1][(npc->indexX) + n].color && ballgrid[(npc->indexY) - 1][(npc->indexX) + n].remain == 0) {
                 checkIsland(&ballgrid[(npc->indexY) - 1][(npc->indexX) + n]);
             }
-            /*case 6*/
+            // Тип коллизии: 6
             if (ballgrid[(npc->indexY) - 1][(npc->indexX) + n - 1].color && ballgrid[(npc->indexY) - 1][(npc->indexX) + n - 1].remain == 0) {
                 checkIsland(&ballgrid[(npc->indexY) - 1][(npc->indexX) + n - 1]);
             }
-            /*case 4*/
+            // Тип коллизии: 4
             if (ballgrid[(npc->indexY) + 1][(npc->indexX) + n - 1].color && ballgrid[(npc->indexY) + 1][(npc->indexX) + n - 1].remain == 0) {
                 checkIsland(&ballgrid[(npc->indexY) + 1][(npc->indexX) + n - 1]);
             }
         }
     }
-    /*case 2*/
+    // Тип коллизии: 2
     if (ballgrid[(npc->indexY)][(npc->indexX) - 1].color && ballgrid[(npc->indexY)][(npc->indexX) - 1].remain == 0) {
         checkIsland(&ballgrid[(npc->indexY)][(npc->indexX) - 1]);
     }
-    /*case 5*/
+    // Тип коллизии: 5
     if (ballgrid[(npc->indexY)][(npc->indexX) + 1].color && ballgrid[(npc->indexY)][(npc->indexX) + 1].remain == 0) {
         checkIsland(&ballgrid[(npc->indexY)][(npc->indexX) + 1]);
     }
 
     return;
 }
-
 
 void checkAround(NPC* npc, int checkcolor)
 {
@@ -1915,7 +1792,7 @@ void checkAround(NPC* npc, int checkcolor)
     RefreshScreen();
 
     /*
-      COLTYPE CODES:
+      Коды типов коллизии:
            6 1
           5 O 2
            4 3
@@ -1927,54 +1804,48 @@ void checkAround(NPC* npc, int checkcolor)
 
     for (n = 0; n <= 1; n++) {
         if ((npc->indexY) % 2 == n) {
-            /*case 3*/
+            // Тип коллизии: 3
             if (ballgrid[(npc->indexY) + 1][(npc->indexX) + n].color == checkcolor) {
                 npc->color = 0;
                 Score += 20;
                 ballgrid[(npc->indexY) + 1][(npc->indexX) + n].color = 0;
-                /*SDL_FreeSurface(ballgrid[(npc->indexY)+1][(npc->indexX)+n].image);*/
                 checkAround(&ballgrid[(npc->indexY) + 1][(npc->indexX) + n], checkcolor);
             }
-            /*case 1*/
+            // Тип коллизии: 1
             if (ballgrid[(npc->indexY) - 1][(npc->indexX) + n].color == checkcolor) {
                 npc->color = 0;
                 Score += 20;
                 ballgrid[(npc->indexY) - 1][(npc->indexX) + n].color = 0;
-                /*SDL_FreeSurface(ballgrid[(npc->indexY)-1][(npc->indexX)+n].image);*/
                 checkAround(&ballgrid[(npc->indexY) - 1][(npc->indexX) + n], checkcolor);
             }
-            /*case 6*/
+            // Тип коллизии: 6
             if (ballgrid[(npc->indexY) - 1][(npc->indexX) + n - 1].color == checkcolor) {
                 npc->color = 0;
                 Score += 20;
                 ballgrid[(npc->indexY) - 1][(npc->indexX) + n - 1].color = 0;
-                /*SDL_FreeSurface(ballgrid[(npc->indexY)-1][(npc->indexX)+n-1].image);*/
                 checkAround(&ballgrid[(npc->indexY) - 1][(npc->indexX) + n - 1], checkcolor);
             }
-            /*case 4*/
+            // Тип коллизии: 4
             if (ballgrid[(npc->indexY) + 1][(npc->indexX) + n - 1].color == checkcolor) {
                 npc->color = 0;
                 Score += 20;
                 ballgrid[(npc->indexY) + 1][(npc->indexX) + n - 1].color = 0;
-                /*SDL_FreeSurface(ballgrid[(npc->indexY)+1][(npc->indexX)+n-1].image);*/
                 checkAround(&ballgrid[(npc->indexY) + 1][(npc->indexX) + n - 1], checkcolor);
             }
         }
     }
-    /*case 2*/
+    // Тип коллизии: 2
     if (ballgrid[(npc->indexY)][(npc->indexX) - 1].color == checkcolor) {
         npc->color = 0;
         Score += 20;
         ballgrid[(npc->indexY)][(npc->indexX) - 1].color = 0;
-        /*SDL_FreeSurface(ballgrid[(npc->indexY)][(npc->indexX)-1].image);*/
         checkAround(&ballgrid[(npc->indexY)][(npc->indexX) - 1], checkcolor);
     }
-    /*case 5*/
+    // Тип коллизии: 5
     if (ballgrid[(npc->indexY)][(npc->indexX) + 1].color == checkcolor) {
         npc->color = 0;
         Score += 20;
         ballgrid[(npc->indexY)][(npc->indexX) + 1].color = 0;
-        /*SDL_FreeSurface(ballgrid[(npc->indexY)][(npc->indexX)+1].image);*/
         checkAround(&ballgrid[(npc->indexY)][(npc->indexX) + 1], checkcolor);
     }
 
@@ -1983,14 +1854,9 @@ void checkAround(NPC* npc, int checkcolor)
 
 void checkDestruction(NPC* npc, int checkcolor)
 {
-    int n;
-    int j;
-
-    /*printf("Entrou no check!\n");*/
+    int n, j;
 
     currentCount++;
-    /*printf("currentCount = %d\n", currentCount);
-    printf("ballCount = %d\n", ballCount);*/
 
     if (currentCount == 1 && ballCount == 1) return;
 
@@ -2005,29 +1871,28 @@ void checkDestruction(NPC* npc, int checkcolor)
     }
     if (ballCount > 2)
     {
-        /* printf("ballCount = %d\n", ballCount); */
         ballCount = 0;
         Score -= 10;
+
         checkAround(destructionStart, destructionStart->color);
+        Mix_PlayChannel(-1, bubblePop, 0);
+
         for (j = 1; j < GRIDX; j++) {
             if (ballgrid[1][j].color) {
                 checkIsland(&ballgrid[1][j]);
             }
 
         }
-        /*printGrid();*/
-        DestroyIsland(true);
+        destroyIsland(true);
         destructionStart = NULL;
         currentCount = 0;
         health++;
-        /*printf("Destruiu!\n");*/
-        if (PlayWin()) {
-            /*printf("\nnão fez mais que a sua obrigação\n");*/
-        }
+        playWin();
         return;
     }
+
     /*
-      COLTYPE CODES:
+      Коды типов коллизии:
            6 1
           5 O 2
            4 3
@@ -2037,34 +1902,34 @@ void checkDestruction(NPC* npc, int checkcolor)
 
     for (n = 0; n <= 1; n++) {
         if ((npc->indexY) % 2 == n) {
-            /*case 3*/
+            // Тип коллизии: 3
             if (ballgrid[(npc->indexY) + 1][(npc->indexX) + n].color == checkcolor) {
                 ballCount++;
                 checkDestruction(&ballgrid[(npc->indexY) + 1][(npc->indexX) + n], checkcolor);
             }
-            /*case 1*/
+            // Тип коллизии: 1
             if (ballgrid[(npc->indexY) - 1][(npc->indexX) + n].color == checkcolor) {
                 ballCount++;
                 checkDestruction(&ballgrid[(npc->indexY) - 1][(npc->indexX) + n], checkcolor);
             }
-            /*case 6*/
+            // Тип коллизии: 6
             if (ballgrid[(npc->indexY) - 1][(npc->indexX) + n - 1].color == checkcolor) {
                 ballCount++;
                 checkDestruction(&ballgrid[(npc->indexY) - 1][(npc->indexX) + n - 1], checkcolor);
             }
-            /*case 4*/
+            // Тип коллизии: 4
             if (ballgrid[(npc->indexY) + 1][(npc->indexX) + n - 1].color == checkcolor) {
                 ballCount++;
                 checkDestruction(&ballgrid[(npc->indexY) + 1][(npc->indexX) + n - 1], checkcolor);
             }
         }
     }
-    /*case 2*/
+    // Тип коллизии: 2
     if (ballgrid[(npc->indexY)][(npc->indexX) - 1].color == checkcolor) {
         ballCount++;
         checkDestruction(&ballgrid[(npc->indexY)][(npc->indexX) - 1], checkcolor);
     }
-    /*case 5*/
+    // Тип коллизии: 5
     if (ballgrid[(npc->indexY)][(npc->indexX) + 1].color == checkcolor) {
         ballCount++;
         checkDestruction(&ballgrid[(npc->indexY)][(npc->indexX) + 1], checkcolor);
@@ -2074,21 +1939,21 @@ void checkDestruction(NPC* npc, int checkcolor)
     return;
 }
 
-void DestroyIsland(int ScoreOn) {
+void destroyIsland(int scoreOn) {
     int i, j;
     for (i = 1; i < BALLY - 1; i++)
         for (j = 1; j < GRIDX; j++) {
-            if (ballgrid[i][j].remain) {
+            if (ballgrid[i][j].remain) 
                 ballgrid[i][j].remain = 0;
-
-
-            }
-            else {
-                if (ballgrid[i][j].color) {
+            else 
+            {
+                if (ballgrid[i][j].color) 
+                {
                     SDL_Delay(5 * DELAY);
                     RefreshScreen();
-                    if (ScoreOn) Score += 100;
+                    if (scoreOn) Score += 100;
                 }
+
                 ballgrid[i][j].indexX = 0;
                 ballgrid[i][j].indexY = 0;
                 ballgrid[i][j].posX = 0;
@@ -2096,19 +1961,15 @@ void DestroyIsland(int ScoreOn) {
                 ballgrid[i][j].centerX = 0;
                 ballgrid[i][j].centerY = 0;
                 ballgrid[i][j].color = 0;
-
-
-                /*SDL_FreeSurface(ballgrid[i][j].image);*/
             }
         }
-    Mix_PlayChannel(-1, bubblePop, 0);
-    /*printGrid();*/
 }
 
-void GetThreatLevel() {
+void changeUI() {
     int i, j, stop = false;
     for (i = BALLY - 1; (i > 0 && stop == false); i--)
-        for (j = 1; j < GRIDX; j++) {
+        for (j = 1; j < GRIDX; j++) 
+        {
             if (ballgrid[i][j].color && i == 13) { ThreatLevel = 3; stop = true; break; }
             else if (ballgrid[i][j].color && i == 10) { ThreatLevel = 2; stop = true; break; }
             else if (ballgrid[i][j].color && i < 10) { ThreatLevel = 1; stop = true; break; }
@@ -2126,61 +1987,65 @@ void GetThreatLevel() {
         EGelement.image = loadSurface(menuYellow);
         if (Sound) SoundElement.image = loadSurface(soundOnYellow);
         else SoundElement.image = loadSurface(soundOffYellow);
+
         break;
     case 3:
         PMUI.image = loadSurface(uiRed);
         EGelement.image = loadSurface(menuRed);
         if (Sound) SoundElement.image = loadSurface(soundOnRed);
         else SoundElement.image = loadSurface(soundOffRed);
+
         break;
     }
 }
 
-void GetLifeSurface() {
+void changeLifes() {
     int i;
     switch (ThreatLevel) {
     case 1:
         for (i = 0; i < health; i++)
             lifeballs[i].image = loadSurface(lifeBlue);
+
         break;
     case 2:
         for (i = 0; i < health; i++)
             lifeballs[i].image = loadSurface(lifeYellow);
+
         break;
     case 3:
         for (i = 0; i < health; i++)
             lifeballs[i].image = loadSurface(lifeRed);
+
         break;
     }
 }
 
-void GetScore() {
-    /*The TTF_Font*/
+void drawScore() {
+    // Шрифты
     TTF_Font* font = NULL;
-    //TTF_Font* bigfont = NULL;
     TTF_Font* shadow = NULL;
 
-    /*The TTF Color*/
+    // Цвета щрифтов
     SDL_Color fontColor = { 255, 255, 255 };
     SDL_Color shadowColor = { 0, 0, 0 };
 
-    /*The Message Surface*/
+    // SDL_Surface для текста
     SDL_Surface* scoreSurface = NULL;
     SDL_Surface* scoreShadowSurface = NULL;
     SDL_Surface* endScoreSurface = NULL;
     SDL_Surface* endScoreShadowSurface = NULL;
 
-    /*SDL_Rect для сообщения с количеством очков*/
+    // SDL_Rect для сообщения с количеством очков
     SDL_Rect messageRect;
 
     char scoreString[16];
 
-    /* Load TTF font */
     font = TTF_OpenFont(font_path, 24);
     shadow = TTF_OpenFont(font_path, 24);
+    TTF_SetFontOutline(shadow, 1);
 
     if (font == NULL)
-        exit(748);
+        exit(404);
 
     switch (ThreatLevel) {
     case 1: // rgb(52, 152, 219)
@@ -2206,18 +2071,18 @@ void GetScore() {
     messageRect.h = 38;
     
     sprintf(scoreString, u8"%012d", Score);
-    /*printf("String Score = %s\n", scoreString);*/
-    TTF_SetFontOutline(shadow, 1);
+
     scoreShadowSurface = TTF_RenderUTF8_Blended(shadow, scoreString, shadowColor);
     scoreSurface = TTF_RenderUTF8_Blended(font, scoreString, fontColor);
+
     if (!scoreSurface) {
-        printf("Failed to render Text!\n");
-        /*exit(734);*/
+        printf("Failed to render text!\n");
+        exit(502);
     }
 
     SDL_BlitSurface(scoreShadowSurface, NULL, gScreenSurface, &messageRect);
     SDL_BlitSurface(scoreSurface, NULL, gScreenSurface, &messageRect);
-    //play = -1;
+
     if (play == -1) {
         messageRect.x = SCREEN_WIDTH / 2 - 10;
         messageRect.y = SCREEN_HEIGHT / 2 - 69;
@@ -2256,73 +2121,4 @@ void EndGameUI() {
         break;
     }
     SDL_GetMouseState(&Mx, &My);
-}
-
-void GetInput(SDL_Event e) {
-    /*The TTF_Font*/
-    TTF_Font* font = NULL;
-
-    /*The TTF Color*/
-    SDL_Color ttfColor;
-
-    /*The Message Surface*/
-    SDL_Surface* NickSurface = NULL;
-
-    /*The Message Rect*/
-    SDL_Rect Message_Rect;
-
-    printf("%s\n", NickString);
-
-    /* Load TTF font */
-    font = TTF_OpenFont(font_path, 20);
-    if (font == NULL)
-        exit(748);
-
-    switch (ThreatLevel) {
-    case 1: ttfColor.r = 145;
-        ttfColor.g = 223;
-        ttfColor.b = 224;
-        break;
-    case 2:
-        ttfColor.r = 213;
-        ttfColor.g = 216;
-        ttfColor.b = 118;
-        break;
-    case 3:
-        ttfColor.r = 224;
-        ttfColor.g = 68;
-        ttfColor.b = 68;
-        break;
-    }
-
-    Message_Rect.x = SCREEN_WIDTH / 2;
-    Message_Rect.y = SCREEN_HEIGHT / 2;
-    Message_Rect.w = 100;
-    Message_Rect.h = 76;
-
-    switch (e.type) {
-    case SDL_TEXTINPUT:
-        if (strlen(NickString) < 16) {
-            strcat(NickString, e.text.text);
-        }
-        break;
-    case SDL_KEYDOWN:
-        switch (e.key.keysym.sym) {
-        case SDLK_BACKSPACE:
-            NickString[strlen(NickString) - 1] = '\0';
-            break;
-        case SDLK_RETURN:
-            getstring = false;
-            break;
-        }
-        break;
-    }
-
-
-    /*NickString[i+1] = '\0';*/
-    NickSurface = TTF_RenderText_Solid(font, NickString, ttfColor);
-    SDL_BlitSurface(NickSurface, NULL, gScreenSurface, &Message_Rect);
-    SDL_FreeSurface(NickSurface);
-
-    TTF_CloseFont(font);
 }
