@@ -1,11 +1,4 @@
-﻿/*
-Game «Bubble Shooter»
-Designed & developed by @xhable
-
-Repo link: https://github.com/xhable1337/Bubble-Shooter
- */
-
-#define _CRT_SECURE_NO_WARNINGS
+﻿#define _CRT_SECURE_NO_WARNINGS
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_mixer.h>
